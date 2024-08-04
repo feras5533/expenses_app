@@ -5,14 +5,16 @@ import '/controllers/transactions_controller.dart';
 import '/common/color_constants.dart';
 
 class CreatTransactionView extends StatefulWidget {
+  const CreatTransactionView({super.key});
+
   @override
   _CreatTransactionViewState createState() => _CreatTransactionViewState();
 }
 
 class _CreatTransactionViewState extends State<CreatTransactionView> {
   int activeCategory = 0;
-  TextEditingController _transactionName = TextEditingController();
-  TextEditingController _transactionAmount = TextEditingController();
+  final TextEditingController _transactionName = TextEditingController();
+  final TextEditingController _transactionAmount = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                 left: Get.width * 0.05,
                 bottom: Get.height * 0.03,
               ),
-              child: Column(
+              child: const Column(
                 children: [
                   Row(
                     children: [
@@ -57,7 +59,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
             builder: (controller) => Expanded(
               child: ListView(
                 shrinkWrap: true,
-                padding: EdgeInsets.only(
+                padding: const EdgeInsets.only(
                   left: 15,
                   top: 15,
                 ),
@@ -69,7 +71,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                         fontWeight: FontWeight.bold,
                         color: black.withOpacity(0.5)),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   SingleChildScrollView(
@@ -87,7 +89,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                               );
                             },
                             child: Padding(
-                              padding: EdgeInsets.all(
+                              padding: const EdgeInsets.all(
                                 7,
                               ),
                               child: Container(
@@ -112,7 +114,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                                     children: [
                                       Text(
                                         categories[index]['name'],
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 15,
                                         ),
@@ -133,7 +135,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         "transaction name",
                         style: TextStyle(
                             fontWeight: FontWeight.w500,
@@ -147,22 +149,22 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                         onTapOutside: (event) {
                           Get.focusScope!.unfocus();
                         },
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.bold,
                             color: black),
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: "Enter The Transaction Name",
                           border: InputBorder.none,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             "Transaction Amount",
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
@@ -179,12 +181,12 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                               Get.focusScope!.unfocus();
                             },
                             cursorColor: black,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: black,
                             ),
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               hintText: "Enter The Transaction Amount",
                               border: InputBorder.none,
                             ),
@@ -213,7 +215,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                           decoration: BoxDecoration(
                               color: primary,
                               borderRadius: BorderRadius.circular(15)),
-                          child: Icon(
+                          child: const Icon(
                             Icons.arrow_forward,
                             color: black,
                           ),

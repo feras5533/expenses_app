@@ -7,6 +7,8 @@ import '/common/color_constants.dart';
 import '/json/day_month.dart';
 
 class BudgetView extends StatefulWidget {
+  const BudgetView({super.key});
+
   @override
   _BudgetViewState createState() => _BudgetViewState();
 }
@@ -44,7 +46,7 @@ class _BudgetViewState extends State<BudgetView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           "Budget",
                           style: TextStyle(
                               fontSize: 20,
@@ -55,7 +57,7 @@ class _BudgetViewState extends State<BudgetView> {
                           onPressed: () {
                             addCategoryPopup(context: context);
                           },
-                          icon: Icon(Icons.add),
+                          icon: const Icon(Icons.add),
                         )
                       ],
                     ),
@@ -72,16 +74,16 @@ class _BudgetViewState extends State<BudgetView> {
                                 activeMonth = index;
                               });
                             },
-                            child: Container(
+                            child: SizedBox(
                               width:
                                   (MediaQuery.of(context).size.width - 40) / 6,
                               child: Column(
                                 children: [
                                   Text(
                                     months[index]['label'],
-                                    style: TextStyle(fontSize: 10),
+                                    style: const TextStyle(fontSize: 10),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   Container(
@@ -149,7 +151,7 @@ class _BudgetViewState extends State<BudgetView> {
                                 ],
                               ),
                               child: Padding(
-                                padding: EdgeInsets.all(25),
+                                padding: const EdgeInsets.all(25),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -159,11 +161,11 @@ class _BudgetViewState extends State<BudgetView> {
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 13,
-                                        color:
-                                            Color(0xff67727d).withOpacity(0.6),
+                                        color: const Color(0xff67727d)
+                                            .withOpacity(0.6),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Row(
@@ -175,7 +177,7 @@ class _BudgetViewState extends State<BudgetView> {
                                             Text(
                                               //change
                                               "\$${categories[index]['total']}",
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 20,
                                               ),
@@ -183,17 +185,17 @@ class _BudgetViewState extends State<BudgetView> {
                                           ],
                                         ),
                                         Text(
-                                          "${(categories[index]['percentage']).toStringAsFixed(2)}\%",
+                                          "${(categories[index]['percentage']).toStringAsFixed(2)}%",
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 13,
-                                            color: Color(0xff67727d)
+                                            color: const Color(0xff67727d)
                                                 .withOpacity(0.6),
                                           ),
                                         ),
                                       ],
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 15,
                                     ),
                                     Stack(
@@ -203,7 +205,7 @@ class _BudgetViewState extends State<BudgetView> {
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(5),
-                                            color: Color(0xff67727d)
+                                            color: const Color(0xff67727d)
                                                 .withOpacity(0.1),
                                           ),
                                         ),

@@ -6,6 +6,8 @@ import '/common/color_constants.dart';
 import '/json/day_month.dart';
 
 class DailyView extends StatefulWidget {
+  const DailyView({super.key});
+
   @override
   _DailyViewState createState() => _DailyViewState();
 }
@@ -41,7 +43,7 @@ class _DailyViewState extends State<DailyView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Daily Transaction",
                       style: TextStyle(
                           fontSize: 20,
@@ -63,13 +65,13 @@ class _DailyViewState extends State<DailyView> {
                                 activeDay = index;
                               });
                             },
-                            child: Container(
+                            child: SizedBox(
                               width: (Get.width * 0.9) / 7,
                               child: Column(
                                 children: [
                                   Text(
                                     days[index]['label'],
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 10,
                                     ),
                                   ),
@@ -139,13 +141,13 @@ class _DailyViewState extends State<DailyView> {
                                       Text(
                                         controller.dailyTransactions[index]
                                             ['name'],
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 15,
                                             color: black,
                                             fontWeight: FontWeight.w500),
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 5,
                                       ),
                                       Text(
@@ -163,7 +165,7 @@ class _DailyViewState extends State<DailyView> {
                                     children: [
                                       Text(
                                         "${controller.dailyTransactions[index]['price']}",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 15,
                                           color: Colors.green,
@@ -175,7 +177,7 @@ class _DailyViewState extends State<DailyView> {
                               ),
                               Padding(
                                 padding: EdgeInsets.only(top: Get.width * 0.02),
-                                child: Divider(
+                                child: const Divider(
                                   thickness: 0.8,
                                 ),
                               ),
@@ -205,7 +207,7 @@ class _DailyViewState extends State<DailyView> {
                     padding: const EdgeInsets.only(top: 5),
                     child: Text(
                       "\$${controller.total}",
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 20,
                           color: black,
                           fontWeight: FontWeight.bold),

@@ -47,7 +47,7 @@ class TransactionsController extends GetxController {
       dailyTransactions.add({
         "name": transactionName,
         "date": formattedDate,
-        "price": "\$${transactionAmount}",
+        "price": "\$$transactionAmount",
         "category": categories[activeCategory]['name'],
       });
       categories[activeCategory]['total'] += double.parse(transactionAmount);
@@ -69,7 +69,7 @@ class TransactionsController extends GetxController {
     color = green,
   }) {
     categories.add({
-      "name": "$name",
+      "name": name,
       "percentage": 0.0,
       "total": 0.0,
       "color": color,

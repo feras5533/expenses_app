@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "435380621245",
+    "project_id": "expenses-app-f5ddb",
+    "storage_bucket": "expenses-app-f5ddb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:435380621245:android:b5968ab447ac48556c4cd4",
+        "android_client_info": {
+          "package_name": "com.example.expenses_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYL-v3r2-dZKXmVH0xZBXweYiXYvLFjTQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

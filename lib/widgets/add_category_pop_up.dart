@@ -16,12 +16,12 @@ addCategoryPopup({required context}) {
           children: [
             TextFormField(
               controller: titleController,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
                 color: black,
               ),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "Enter The Category Name",
               ),
             ),

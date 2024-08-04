@@ -8,12 +8,12 @@ LineChartData mainData() {
         show: true,
         drawHorizontalLine: true,
         getDrawingHorizontalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
+          return const FlLine(
+            color: Color(0xff37434d),
             strokeWidth: 0.1,
           );
         }),
-    titlesData: FlTitlesData(
+    titlesData: const FlTitlesData(
       bottomTitles: AxisTitles(),
       rightTitles: AxisTitles(),
     ),
@@ -27,12 +27,12 @@ LineChartData mainData() {
     lineBarsData: [
       LineChartBarData(
         spots: [
-          FlSpot(0, 3),
-          FlSpot(2.6, 2),
-          FlSpot(4.9, 5),
-          FlSpot(6.8, 3.1),
-          FlSpot(7, 4),
-          FlSpot(8, 3),
+          const FlSpot(0, 3),
+          const FlSpot(2.6, 2),
+          const FlSpot(4.9, 5),
+          const FlSpot(6.8, 3.1),
+          const FlSpot(7, 4),
+          const FlSpot(8, 3),
         ],
         isCurved: true,
         color: primary,

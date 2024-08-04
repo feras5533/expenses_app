@@ -7,6 +7,8 @@ import '/views/create_transaction_view.dart';
 import '/views/daily_view.dart';
 
 class BottomNavigationBarWidget extends StatefulWidget {
+  const BottomNavigationBarWidget({super.key});
+
   @override
   _BottomNavigationBarWidgetState createState() =>
       _BottomNavigationBarWidgetState();
@@ -16,9 +18,9 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   int pageIndex = 0;
 
   List<Widget> pages = [
-    DailyView(),
-    BudgetView(),
-    CreatTransactionView(),
+    const DailyView(),
+    const BudgetView(),
+    const CreatTransactionView(),
   ];
 
   @override
@@ -31,12 +33,12 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
         onPressed: () {
           selectedTab(2);
         },
-        child: Icon(
+        shape: const CircleBorder(),
+        backgroundColor: Colors.green,
+        child: const Icon(
           Icons.add,
           size: 25,
         ),
-        shape: CircleBorder(),
-        backgroundColor: Colors.green,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
