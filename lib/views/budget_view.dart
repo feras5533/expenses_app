@@ -18,17 +18,17 @@ class _BudgetViewState extends State<BudgetView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: grey.withOpacity(0.08),
+      backgroundColor: AppTheme.grey.withOpacity(0.08),
       body: GetBuilder<TransactionsController>(
         init: TransactionsController(),
         builder: (controller) => Column(
           children: [
             Container(
               decoration: BoxDecoration(
-                color: white,
+                color: AppTheme.white,
                 boxShadow: [
                   BoxShadow(
-                    color: grey.withOpacity(0.08),
+                    color: AppTheme.grey.withOpacity(0.08),
                     spreadRadius: 10,
                     blurRadius: 3,
                   ),
@@ -46,12 +46,12 @@ class _BudgetViewState extends State<BudgetView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           "Budget",
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: black),
+                              color: AppTheme.black),
                         ),
                         IconButton(
                           onPressed: () {
@@ -89,13 +89,14 @@ class _BudgetViewState extends State<BudgetView> {
                                   Container(
                                     decoration: BoxDecoration(
                                         color: activeMonth == index
-                                            ? primary
-                                            : black.withOpacity(0.02),
+                                            ? AppTheme.primaryColor
+                                            : AppTheme.black.withOpacity(0.02),
                                         borderRadius: BorderRadius.circular(5),
                                         border: Border.all(
                                             color: activeMonth == index
-                                                ? primary
-                                                : black.withOpacity(0.1))),
+                                                ? AppTheme.primaryColor
+                                                : AppTheme.black
+                                                    .withOpacity(0.1))),
                                     child: Padding(
                                       padding: const EdgeInsets.only(
                                           left: 12,
@@ -108,8 +109,8 @@ class _BudgetViewState extends State<BudgetView> {
                                             fontSize: 10,
                                             fontWeight: FontWeight.w600,
                                             color: activeMonth == index
-                                                ? white
-                                                : black),
+                                                ? AppTheme.white
+                                                : AppTheme.black),
                                       ),
                                     ),
                                   )
@@ -140,11 +141,11 @@ class _BudgetViewState extends State<BudgetView> {
                             child: Container(
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                color: white,
+                                color: AppTheme.white,
                                 borderRadius: BorderRadius.circular(12),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: grey.withOpacity(0.02),
+                                    color: AppTheme.grey.withOpacity(0.02),
                                     spreadRadius: 10,
                                     blurRadius: 3,
                                   ),

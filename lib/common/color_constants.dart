@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-const Color primary = Colors.green;
-const Color secondary = Color.fromARGB(255, 103, 241, 107);
-const Color black = Colors.black;
-const Color white = Colors.white;
-const Color grey = Colors.grey;
-const Color red = Colors.red;
-const Color green = Colors.green;
-const Color blue = Colors.blue;
-const Color orange = Colors.orange;
+class AppTheme {
+  static Color primaryColor = Colors.green;
+  static Color secondaryColor = Color.fromRGBO(103, 241, 107, 1);
+  static Color black = Colors.black;
+  static Color white = Colors.white;
+  static Color grey = Colors.grey;
+  static Color red = Colors.red;
+  static Color blue = Colors.blue;
+  static Color orange = Colors.orange;
+}

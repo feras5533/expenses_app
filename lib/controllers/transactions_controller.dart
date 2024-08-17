@@ -9,25 +9,25 @@ List categories = [
     "name": "Food",
     "percentage": 0.0,
     "total": 0.0,
-    "color": green,
+    "color": AppTheme.primaryColor,
   },
   {
     "name": "Gift",
     "percentage": 0.0,
     "total": 0.0,
-    "color": blue,
+    "color": AppTheme.blue,
   },
   {
     "name": "Charity",
     "percentage": 0.0,
     "total": 0.0,
-    "color": red,
+    "color": AppTheme.red,
   },
   {
     "name": "Transportation",
     "percentage": 0.0,
     "total": 0.0,
-    "color": orange,
+    "color": AppTheme.orange,
   },
 ];
 
@@ -66,7 +66,7 @@ class TransactionsController extends GetxController {
 
   List<dynamic> addCategory({
     required String name,
-    color = green,
+    color,
   }) {
     categories.add({
       "name": name,

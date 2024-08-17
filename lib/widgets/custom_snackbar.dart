@@ -15,11 +15,12 @@ customDialog({
         height: 50,
         padding: const EdgeInsets.only(left: 20),
         decoration: BoxDecoration(
-          border: Border.all(color: error ? Colors.black : primary),
+          border:
+              Border.all(color: error ? Colors.black : AppTheme.primaryColor),
           borderRadius: const BorderRadius.all(
             Radius.circular(15),
           ),
-          color: error ? Colors.grey.shade900 : primary,
+          color: error ? Colors.grey.shade900 : AppTheme.primaryColor,
         ),
         child: Row(
           children: [

@@ -19,13 +19,13 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: grey.withOpacity(0.05),
+      backgroundColor: AppTheme.grey.withOpacity(0.05),
       body: Column(
         children: [
           Container(
-            decoration: BoxDecoration(color: white, boxShadow: [
+            decoration: BoxDecoration(color: AppTheme.white, boxShadow: [
               BoxShadow(
-                color: grey.withOpacity(0.08),
+                color: AppTheme.grey.withOpacity(0.08),
                 spreadRadius: 10,
                 blurRadius: 3,
               ),
@@ -37,7 +37,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                 left: Get.width * 0.05,
                 bottom: Get.height * 0.03,
               ),
-              child: const Column(
+              child: Column(
                 children: [
                   Row(
                     children: [
@@ -46,7 +46,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: black),
+                            color: AppTheme.black),
                       ),
                     ],
                   ),
@@ -69,7 +69,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                     style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: black.withOpacity(0.5)),
+                        color: AppTheme.black.withOpacity(0.5)),
                   ),
                   const SizedBox(
                     height: 20,
@@ -94,16 +94,16 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                               ),
                               child: Container(
                                 decoration: BoxDecoration(
-                                    color: white,
+                                    color: AppTheme.white,
                                     border: Border.all(
                                         width: 2,
                                         color: activeCategory == index
-                                            ? primary
+                                            ? AppTheme.primaryColor
                                             : Colors.transparent),
                                     borderRadius: BorderRadius.circular(12),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: grey.withOpacity(0.3),
+                                        color: AppTheme.grey.withOpacity(0.3),
                                         spreadRadius: 2,
                                         blurRadius: 2,
                                       ),
@@ -144,15 +144,15 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                       ),
                       TextFormField(
                         controller: _transactionName,
-                        cursorColor: black,
+                        cursorColor: AppTheme.black,
                         textInputAction: TextInputAction.next,
                         onTapOutside: (event) {
                           Get.focusScope!.unfocus();
                         },
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.bold,
-                            color: black),
+                            color: AppTheme.black),
                         decoration: const InputDecoration(
                           hintText: "Enter The Transaction Name",
                           border: InputBorder.none,
@@ -180,11 +180,11 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                             onFieldSubmitted: (value) {
                               Get.focusScope!.unfocus();
                             },
-                            cursorColor: black,
-                            style: const TextStyle(
+                            cursorColor: AppTheme.black,
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: black,
+                              color: AppTheme.black,
                             ),
                             decoration: const InputDecoration(
                               hintText: "Enter The Transaction Amount",
@@ -213,11 +213,11 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
-                              color: primary,
+                              color: AppTheme.primaryColor,
                               borderRadius: BorderRadius.circular(15)),
-                          child: const Icon(
+                          child: Icon(
                             Icons.arrow_forward,
-                            color: black,
+                            color: AppTheme.black,
                           ),
                         ),
                       ),

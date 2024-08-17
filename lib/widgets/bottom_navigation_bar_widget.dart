@@ -58,8 +58,8 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
     ];
 
     return AnimatedBottomNavigationBar(
-      activeColor: primary,
-      splashColor: secondary,
+      activeColor: AppTheme.primaryColor,
+      splashColor: AppTheme.secondaryColor,
       inactiveColor: Colors.black.withOpacity(0.5),
       icons: iconItems,
       activeIndex: pageIndex,

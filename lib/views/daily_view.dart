@@ -24,10 +24,10 @@ class _DailyViewState extends State<DailyView> {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: white,
+                color: AppTheme.white,
                 boxShadow: [
                   BoxShadow(
-                    color: grey.withOpacity(0.08),
+                    color: AppTheme.grey.withOpacity(0.08),
                     spreadRadius: 10,
                     blurRadius: 3,
                   ),
@@ -43,12 +43,12 @@ class _DailyViewState extends State<DailyView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       "Daily Transaction",
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: black),
+                          color: AppTheme.black),
                     ),
                     SizedBox(
                       height: Get.height * 0.03,
@@ -82,13 +82,13 @@ class _DailyViewState extends State<DailyView> {
                                     height: Get.height * 0.04,
                                     decoration: BoxDecoration(
                                       color: activeDay == index
-                                          ? primary
+                                          ? AppTheme.primaryColor
                                           : Colors.transparent,
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         color: activeDay == index
-                                            ? primary
-                                            : black.withOpacity(
+                                            ? AppTheme.primaryColor
+                                            : AppTheme.black.withOpacity(
                                                 0.2,
                                               ),
                                       ),
@@ -100,8 +100,8 @@ class _DailyViewState extends State<DailyView> {
                                             fontSize: 10,
                                             fontWeight: FontWeight.w600,
                                             color: activeDay == index
-                                                ? white
-                                                : black),
+                                                ? AppTheme.white
+                                                : AppTheme.black),
                                       ),
                                     ),
                                   ),
@@ -141,9 +141,9 @@ class _DailyViewState extends State<DailyView> {
                                       Text(
                                         controller.dailyTransactions[index]
                                             ['name'],
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                             fontSize: 15,
-                                            color: black,
+                                            color: AppTheme.black,
                                             fontWeight: FontWeight.w500),
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -154,7 +154,8 @@ class _DailyViewState extends State<DailyView> {
                                         "${controller.dailyTransactions[index]['category']} . ${controller.dailyTransactions[index]['date']}",
                                         style: TextStyle(
                                             fontSize: 12,
-                                            color: black.withOpacity(0.5),
+                                            color:
+                                                AppTheme.black.withOpacity(0.5),
                                             fontWeight: FontWeight.w400),
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -199,7 +200,7 @@ class _DailyViewState extends State<DailyView> {
                     "Total",
                     style: TextStyle(
                         fontSize: 16,
-                        color: black.withOpacity(0.4),
+                        color: AppTheme.black.withOpacity(0.4),
                         fontWeight: FontWeight.w600),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -207,9 +208,9 @@ class _DailyViewState extends State<DailyView> {
                     padding: const EdgeInsets.only(top: 5),
                     child: Text(
                       "\$${controller.total}",
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 20,
-                          color: black,
+                          color: AppTheme.black,
                           fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
                     ),
