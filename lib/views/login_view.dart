@@ -165,7 +165,7 @@ class _LoginViewState extends State<LoginView> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Login With Google  "),
+                  const Text("Login With Google"),
                   Image.asset(
                     "images/google_logo.png",
                     width: 20,
