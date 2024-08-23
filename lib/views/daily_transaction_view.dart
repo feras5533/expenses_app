@@ -1,3 +1,5 @@
+import 'package:expenses_app/views/login_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -5,14 +7,14 @@ import '/controllers/transactions_controller.dart';
 import '/common/color_constants.dart';
 import '/json/day_month.dart';
 
-class DailyView extends StatefulWidget {
-  const DailyView({super.key});
+class DailyTransactionView extends StatefulWidget {
+  const DailyTransactionView({super.key});
 
   @override
-  _DailyViewState createState() => _DailyViewState();
+  _DailyTransactionViewState createState() => _DailyTransactionViewState();
 }
 
-class _DailyViewState extends State<DailyView> {
+class _DailyTransactionViewState extends State<DailyTransactionView> {
   int activeDay = 3;
 
   @override
@@ -43,12 +45,26 @@ class _DailyViewState extends State<DailyView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Daily Transaction",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.black),
+                    Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Daily Transactionaa",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.black),
+                        ),
+                        IconButton(
+                          onPressed: () async {
+                            await FirebaseAuth.instance.signOut();
+                            Get.off(const LoginView());
+                          },
+                          icon: const Icon(
+                            Icons.output_sharp,
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(
                       height: Get.height * 0.03,

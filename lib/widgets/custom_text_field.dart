@@ -1,29 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '/common/color_constants.dart';
 
 class CustomTextField extends StatelessWidget {
-  final String hinttext;
-  final TextEditingController mycontroller;
+  final String hintText;
+  final TextEditingController controller;
+  final bool lastField;
 
-  const CustomTextField(
-      {super.key, required this.hinttext, required this.mycontroller});
+  const CustomTextField({
+    super.key,
+    required this.hintText,
+    required this.controller,
+    this.lastField = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: mycontroller,
+      controller: controller,
+      textInputAction: lastField ? TextInputAction.done : TextInputAction.next,
+      cursorColor: AppTheme.primaryColor,
+      onTapOutside: (event) {
+        Get.focusScope!.unfocus();
+      },
       decoration: InputDecoration(
-          hintText: hinttext,
-          hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
-          contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 20),
-          filled: true,
-          fillColor: Colors.grey[200],
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
-              borderSide:
-                  BorderSide(color: const Color.fromARGB(255, 184, 184, 184))),
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide(color: Colors.grey))),
+        hintText: hintText,
+        hintStyle: TextStyle(fontSize: 14, color: AppTheme.grey),
+        contentPadding: const EdgeInsets.symmetric(vertical: 2, horizontal: 20),
+        filled: true,
+        fillColor: AppTheme.grey.withOpacity(0.25),
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(35),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(35),
+          ),
+          borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
+        ),
+      ),
     );
   }
 }

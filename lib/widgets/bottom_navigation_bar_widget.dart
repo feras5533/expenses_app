@@ -4,7 +4,7 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import '/common/color_constants.dart';
 import '/views/budget_view.dart';
 import '/views/create_transaction_view.dart';
-import '/views/daily_view.dart';
+import '../views/daily_transaction_view.dart';
 
 class BottomNavigationBarWidget extends StatefulWidget {
   const BottomNavigationBarWidget({super.key});
@@ -18,7 +18,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   int pageIndex = 0;
 
   List<Widget> pages = [
-    const DailyView(),
+    const DailyTransactionView(),
     const BudgetView(),
     const CreatTransactionView(),
   ];
