@@ -1,9 +1,7 @@
-import 'package:expenses_app/common/prints.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:expenses_app/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '/widgets/bottom_navigation_bar_widget.dart';
 import '/widgets/custom_snackbar.dart';
 import '/widgets/custom_text_field.dart';
 import '/widgets/custom_button.dart';
@@ -21,31 +19,17 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  signInWithEmailAndPassword({
-    required email,
-    required password,
-  }) async {
-    try {
-      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      Get.off(const BottomNavigationBarWidget());
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        printWarning('No user found with the used data.');
-        customDialog(
-          title: 'user not found.1',
-          context: context,
-        );
-      } else {
-        printError(e);
-        customDialog(
-          title: 'user not found.2',
-          context: context,
-        );
-      }
-    }
+  login() {
+    var request = AuthController(context: context);
+    request.signInWithEmailAndPassword(
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+  }
+
+  loginWithGoogle() {
+    var request = AuthController(context: context);
+    request.signInWithGoogle();
   }
 
   @override
@@ -140,10 +124,7 @@ class _LoginViewState extends State<LoginView> {
             CustomButton(
                 title: "login",
                 onPressed: () {
-                  signInWithEmailAndPassword(
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                  );
+                  login();
                 }),
             SizedBox(
               height: Get.height * 0.02,
@@ -182,10 +163,11 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 IconButton(
                   onPressed: () {
-                    customDialog(
-                      title: 'this feature in not available',
-                      context: context,
-                    );
+                    // customDialog(
+                    //   title: 'this feature in not available',
+                    //   context: context,
+                    // );
+                    loginWithGoogle();
                   },
                   icon: Image.asset('assets/images/google_logo.png'),
                 ),

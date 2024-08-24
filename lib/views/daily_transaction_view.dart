@@ -1,5 +1,4 @@
-import 'package:expenses_app/views/login_view.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:expenses_app/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,6 +15,11 @@ class DailyTransactionView extends StatefulWidget {
 
 class _DailyTransactionViewState extends State<DailyTransactionView> {
   int activeDay = 3;
+
+  signOut() {
+    AuthController request = AuthController(context: context);
+    request.signout();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +61,9 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
                         ),
                         IconButton(
                           onPressed: () async {
-                            await FirebaseAuth.instance.signOut();
-                            Get.off(const LoginView());
+                            signOut();
+                            // xx  await FirebaseAuth.instance.signOut();
+                            //   Get.off(const LoginView());
                           },
                           icon: const Icon(
                             Icons.output_sharp,

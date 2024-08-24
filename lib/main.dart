@@ -4,9 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-// import '/widgets/bottom_navigation_bar_widget.dart';
-// import 'views/login_view.dart';
-import 'views/signup_view.dart';
+import 'views/login_view.dart';
+import 'widgets/bottom_navigation_bar_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +43,9 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const SignUpView(),
+      home: FirebaseAuth.instance.currentUser == null
+          ? const LoginView()
+          : const BottomNavigationBarWidget(),
     );
   }
 

@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:expenses_app/common/prints.dart';
-import 'package:expenses_app/views/login_view.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-import '/widgets/bottom_navigation_bar_widget.dart';
+import '/views/login_view.dart';
+import '/controllers/auth_controller.dart';
 import '/widgets/custom_button.dart';
 import '/widgets/custom_text_field.dart';
 
@@ -21,26 +18,13 @@ class _SignUpViewState extends State<SignUpView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  createUserWithEmailAndPassword({
-    required email,
-    required password,
-  }) async {
-    try {
-      final credential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      Get.off(const BottomNavigationBarWidget());
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        printWarning('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        printWarning('The account already exists for that email.');
-      }
-    } catch (e) {
-      printError(e);
-    }
+  signUp() {
+    var request = AuthController(context: context);
+
+    request.createUserWithEmailAndPassword(
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
   }
 
   @override
@@ -138,10 +122,7 @@ class _SignUpViewState extends State<SignUpView> {
             CustomButton(
               title: "SignUp",
               onPressed: () {
-                createUserWithEmailAndPassword(
-                  email: _emailController.text,
-                  password: _passwordController.text,
-                );
+                signUp();
               },
             ),
 
