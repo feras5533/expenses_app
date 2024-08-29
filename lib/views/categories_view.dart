@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../controllers/transactions_controller.dart';
-import '../widgets/add_category_pop_up.dart';
+import '/controllers/categories_controller.dart';
+import '/controllers/transactions_controller.dart';
 import '/common/color_constants.dart';
 import '/json/day_month.dart';
 
-class BudgetView extends StatefulWidget {
-  const BudgetView({super.key});
+class CategoriesView extends StatefulWidget {
+  const CategoriesView({
+    super.key,
+    required this.categories,
+  });
 
+  final List categories;
   @override
-  _BudgetViewState createState() => _BudgetViewState();
+  _CategoriesViewState createState() => _CategoriesViewState();
 }
 
-class _BudgetViewState extends State<BudgetView> {
+class _CategoriesViewState extends State<CategoriesView> {
   int activeMonth = 3;
+  addCategory() {
+    CategoriesController request = CategoriesController(context: context);
+    request.addCategoryPopup();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +56,7 @@ class _BudgetViewState extends State<BudgetView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Budget",
+                          "Categories",
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -55,7 +64,7 @@ class _BudgetViewState extends State<BudgetView> {
                         ),
                         IconButton(
                           onPressed: () {
-                            addCategoryPopup(context: context);
+                            addCategory();
                           },
                           icon: const Icon(Icons.add),
                         )
@@ -64,61 +73,67 @@ class _BudgetViewState extends State<BudgetView> {
                     SizedBox(
                       height: Get.height * 0.03,
                     ),
-                    Row(
-                      children: List.generate(
-                        months.length,
-                        (index) {
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                activeMonth = index;
-                              });
-                            },
-                            child: SizedBox(
-                              width:
-                                  (MediaQuery.of(context).size.width - 40) / 6,
-                              child: Column(
-                                children: [
-                                  Text(
-                                    months[index]['label'],
-                                    style: const TextStyle(fontSize: 10),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        color: activeMonth == index
-                                            ? AppTheme.primaryColor
-                                            : AppTheme.black.withOpacity(0.02),
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(
-                                            color: activeMonth == index
-                                                ? AppTheme.primaryColor
-                                                : AppTheme.black
-                                                    .withOpacity(0.1))),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 12,
-                                          right: 12,
-                                          top: 7,
-                                          bottom: 7),
-                                      child: Text(
-                                        months[index]['day'],
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w600,
-                                            color: activeMonth == index
-                                                ? AppTheme.white
-                                                : AppTheme.black),
-                                      ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: List.generate(
+                          months.length,
+                          (index) {
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  activeMonth = index;
+                                });
+                              },
+                              child: SizedBox(
+                                width:
+                                    (MediaQuery.of(context).size.width - 40) /
+                                        6,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      months[index]['label'],
+                                      style: const TextStyle(fontSize: 10),
                                     ),
-                                  )
-                                ],
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: activeMonth == index
+                                              ? AppTheme.primaryColor
+                                              : AppTheme.black
+                                                  .withOpacity(0.02),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          border: Border.all(
+                                              color: activeMonth == index
+                                                  ? AppTheme.primaryColor
+                                                  : AppTheme.black
+                                                      .withOpacity(0.1))),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 12,
+                                            right: 12,
+                                            top: 7,
+                                            bottom: 7),
+                                        child: Text(
+                                          months[index]['day'],
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w600,
+                                              color: activeMonth == index
+                                                  ? AppTheme.white
+                                                  : AppTheme.black),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
                     )
                   ],
@@ -133,7 +148,7 @@ class _BudgetViewState extends State<BudgetView> {
                     padding: EdgeInsets.symmetric(horizontal: Get.width * 0.03),
                     child: Column(
                       children: List.generate(
-                        categories.length,
+                        widget.categories.length,
                         (index) {
                           return Padding(
                             padding:
@@ -158,7 +173,7 @@ class _BudgetViewState extends State<BudgetView> {
                                   children: [
                                     Text(
                                       //change
-                                      categories[index]['name'],
+                                      widget.categories[index]['name'],
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 13,
@@ -177,7 +192,7 @@ class _BudgetViewState extends State<BudgetView> {
                                           children: [
                                             Text(
                                               //change
-                                              "\$${categories[index]['total']}",
+                                              "\$${widget.categories[index]['total']}",
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 20,
@@ -186,7 +201,7 @@ class _BudgetViewState extends State<BudgetView> {
                                           ],
                                         ),
                                         Text(
-                                          "${(categories[index]['percentage']).toStringAsFixed(2)}%",
+                                          "${(widget.categories[index]['percentage']).toStringAsFixed(2)}%",
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 13,
@@ -211,14 +226,15 @@ class _BudgetViewState extends State<BudgetView> {
                                           ),
                                         ),
                                         Container(
-                                          width: categories[index]
+                                          width: widget.categories[index]
                                                   ['percentage'] *
                                               3,
                                           height: 4,
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(5),
-                                            color: categories[index]['color'],
+                                            color: widget.categories[index]
+                                                ['color'],
                                           ),
                                         ),
                                       ],

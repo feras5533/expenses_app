@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../views/login_view.dart';
+import '/views/login_view.dart';
 import '/common/prints.dart';
 import '/widgets/bottom_navigation_bar_widget.dart';
 import '/widgets/custom_snackbar.dart';
@@ -14,7 +14,7 @@ class AuthController {
     required this.context,
   });
 
-  createUserWithEmailAndPassword({
+  Future createUserWithEmailAndPassword({
     required email,
     required password,
   }) async {
@@ -23,7 +23,7 @@ class AuthController {
         email: email,
         password: password,
       );
-      Get.offAll(() => const BottomNavigationBarWidget());
+      Get.offAll(() => BottomNavigationBarWidget());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         printWarning('The password provided is too weak.');
@@ -35,7 +35,7 @@ class AuthController {
     }
   }
 
-  signInWithEmailAndPassword({
+  Future signInWithEmailAndPassword({
     required email,
     required password,
   }) async {
@@ -44,7 +44,7 @@ class AuthController {
         email: email,
         password: password,
       );
-      Get.offAll(() => const BottomNavigationBarWidget());
+      Get.offAll(() => BottomNavigationBarWidget());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
         printWarning('No user found with the used data.');
@@ -79,9 +79,9 @@ class AuthController {
       idToken: googleAuth.idToken,
     );
 
-    // Get.offAll(() => const BottomNavigationBarWidget());
     // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    Get.offAll(() => BottomNavigationBarWidget());
   }
 
   Future signout() async {

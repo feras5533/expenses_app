@@ -1,41 +1,13 @@
+import 'package:expenses_app/common/prints.dart';
 import 'package:expenses_app/widgets/custom_snackbar.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
-import '/common/color_constants.dart';
-
-List categories = [
-  {
-    "name": "Food",
-    "percentage": 0.0,
-    "total": 0.0,
-    "color": AppTheme.primaryColor,
-  },
-  {
-    "name": "Gift",
-    "percentage": 0.0,
-    "total": 0.0,
-    "color": AppTheme.blue,
-  },
-  {
-    "name": "Charity",
-    "percentage": 0.0,
-    "total": 0.0,
-    "color": AppTheme.red,
-  },
-  {
-    "name": "Transportation",
-    "percentage": 0.0,
-    "total": 0.0,
-    "color": AppTheme.orange,
-  },
-];
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TransactionsController extends GetxController {
-  List dailyTransactions = [];
-  double total = 0.0;
+  var db = FirebaseFirestore.instance;
 
-  void addTransaction({
+  addTransaction({
     required activeCategory,
     required transactionName,
     required transactionAmount,
@@ -44,48 +16,119 @@ class TransactionsController extends GetxController {
     if (transactionName.isNotEmpty && transactionAmount.isNotEmpty) {
       DateTime now = DateTime.now();
       String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-      dailyTransactions.add({
+      var transaction = {
         "name": transactionName,
         "date": formattedDate,
-        "price": "\$$transactionAmount",
-        "category": categories[activeCategory]['name'],
-      });
-      categories[activeCategory]['total'] += double.parse(transactionAmount);
-      total += double.parse(transactionAmount);
+        "price": transactionAmount,
+        "category": activeCategory['name'],
+      };
+      db.collection("transactions").doc().set(transaction).onError(
+          (e, _) => printError("Error writing transactions document: $e"));
+
+      calcTotal(
+        // activeCategory: activeCategory,
+        transactionAmount: transactionAmount,
+      );
       update();
       customDialog(
         title: 'The Transaction Has Been Added',
         context: context,
         error: false,
       );
-      calculatePercentages();
+      // calculatePercentages();
     } else {
       customDialog(title: 'Please fill both the fields', context: context);
     }
   }
 
-  List<dynamic> addCategory({
+  calcTotal({
+    // required activeCategory,
+    required transactionAmount,
+  }) async {
+    double total = 0.0;
+
+    // activeCategory['total'] += double.parse(transactionAmount);
+    total += double.parse(transactionAmount);
+
+    var totalStore = {
+      'total': total,
+    };
+    db
+        .collection("total")
+        .doc('total')
+        .set(totalStore)
+        .onError((e, _) => printError("Error writing total document: $e"));
+  }
+
+  calcCategoryTotal({
+    required activeCategory,
+    required transactionAmount,
+  }) async {
+    double total = 0.0;
+
+    activeCategory['total'] += double.parse(transactionAmount);
+    total += double.parse(transactionAmount);
+
+    var totalStore = {
+      'total': total,
+    };
+    db
+        .collection("categories")
+        .doc()
+        .set(totalStore)
+        .onError((e, _) => printError("Error writing total document: $e"));
+  }
+
+  addCategory({
     required String name,
     color,
   }) {
-    categories.add({
+    var category = <String, dynamic>{
       "name": name,
       "percentage": 0.0,
       "total": 0.0,
-      "color": color,
-    });
+    };
+    db
+        .collection("categories")
+        .doc()
+        .set(category)
+        .onError((e, _) => printError("Error writing categories document: $e"));
+    getCategoriesData();
     update();
-    return categories;
+  }
+
+  getCategoriesData() async {
+    CollectionReference collectionRef =
+        FirebaseFirestore.instance.collection('categories');
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await collectionRef.get();
+
+    // Get data from docs and convert map to List
+    var allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    return allData;
+    // categories.addAll(allData);
+  }
+
+  getTransactionsData() async {
+    CollectionReference collectionRef =
+        FirebaseFirestore.instance.collection('transactions');
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await collectionRef.get();
+
+    // Get data from docs and convert map to List
+    final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    return allData;
+    // categories.addAll(allData);
   }
 
   void calculatePercentages() {
-    double totalSum =
-        categories.fold(0.0, (sum, category) => sum + category["total"]);
+    // double totalSum =
+    //     categories.fold(0.0, (double sum, category) => sum + category["total"]);
 
-    for (var category in categories) {
-      category["percentage"] = ((category["total"] / totalSum) * 100);
-    }
+    // for (var category in categories) {
+    //   category["percentage"] = ((category["total"] / totalSum) * 100);
+    // }
 
-    update();
+    // update();
   }
 }

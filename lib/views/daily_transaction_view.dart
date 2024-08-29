@@ -7,7 +7,11 @@ import '/common/color_constants.dart';
 import '/json/day_month.dart';
 
 class DailyTransactionView extends StatefulWidget {
-  const DailyTransactionView({super.key});
+  const DailyTransactionView({
+    super.key,
+    required this.transactions,
+  });
+  final List transactions;
 
   @override
   _DailyTransactionViewState createState() => _DailyTransactionViewState();
@@ -50,10 +54,9 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Daily Transactionaa",
+                          "Daily Transactions",
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -62,8 +65,6 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
                         IconButton(
                           onPressed: () async {
                             signOut();
-                            // xx  await FirebaseAuth.instance.signOut();
-                            //   Get.off(const LoginView());
                           },
                           icon: const Icon(
                             Icons.output_sharp,
@@ -146,7 +147,7 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
                         EdgeInsets.symmetric(horizontal: (Get.width * 0.1) / 2),
                     child: Column(
                       children: List.generate(
-                        controller.dailyTransactions.length,
+                        widget.transactions.length,
                         (index) {
                           return Column(
                             children: [
@@ -160,8 +161,7 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        controller.dailyTransactions[index]
-                                            ['name'],
+                                        widget.transactions[index]['name'],
                                         style: TextStyle(
                                             fontSize: 15,
                                             color: AppTheme.black,
@@ -172,7 +172,7 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
                                         height: 5,
                                       ),
                                       Text(
-                                        "${controller.dailyTransactions[index]['category']} . ${controller.dailyTransactions[index]['date']}",
+                                        "${widget.transactions[index]['category']} . ${widget.transactions[index]['date']}",
                                         style: TextStyle(
                                             fontSize: 12,
                                             color:
@@ -186,7 +186,7 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Text(
-                                        "${controller.dailyTransactions[index]['price']}",
+                                        "\$ ${widget.transactions[index]['price']}",
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 15,
@@ -228,7 +228,7 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
                     child: Text(
-                      "\$${controller.total}",
+                      "\$ controller.total",
                       style: TextStyle(
                           fontSize: 20,
                           color: AppTheme.black,

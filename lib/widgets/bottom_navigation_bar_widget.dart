@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
+import '/controllers/transactions_controller.dart';
 import '/common/color_constants.dart';
-import '/views/budget_view.dart';
+import '/views/categories_view.dart';
 import '/views/create_transaction_view.dart';
-import '../views/daily_transaction_view.dart';
+import '/views/daily_transaction_view.dart';
+import '/common/prints.dart';
 
 class BottomNavigationBarWidget extends StatefulWidget {
   const BottomNavigationBarWidget({super.key});
@@ -15,19 +17,64 @@ class BottomNavigationBarWidget extends StatefulWidget {
 }
 
 class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
-  int pageIndex = 0;
+  @override
+  void initState() {
+    initData();
+    super.initState();
+  }
 
-  List<Widget> pages = [
-    const DailyTransactionView(),
-    const BudgetView(),
-    const CreatTransactionView(),
-  ];
+  List<Widget> pages = [];
+  List categories = [];
+  List transactions = [];
+
+  int pageIndex = 0;
+  bool isLoading = true;
+
+  getCategoriesData() async {
+    TransactionsController request = TransactionsController();
+    categories = await request.getCategoriesData();
+    printWarning(categories);
+    return categories;
+  }
+
+  getTransactionsData() async {
+    TransactionsController request = TransactionsController();
+    transactions = await request.getTransactionsData();
+    printWarning(transactions);
+    return transactions;
+  }
+
+  initData() async {
+    await getCategoriesData();
+    await getTransactionsData();
+
+    pages = [
+      DailyTransactionView(
+        transactions: transactions,
+      ),
+      CategoriesView(
+        categories: categories,
+      ),
+      CreatTransactionView(
+        categories: categories,
+      ),
+    ];
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: body(),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: AppTheme.primaryColor,
+              ),
+            )
+          : body(),
       bottomNavigationBar: navBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -76,6 +123,8 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
 
   selectedTab(index) {
     setState(() {
+      getCategoriesData();
+      getTransactionsData();
       pageIndex = index;
     });
   }
