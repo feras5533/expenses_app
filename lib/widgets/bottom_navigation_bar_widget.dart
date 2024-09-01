@@ -34,14 +34,12 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
     TransactionsController request = TransactionsController();
     categories = await request.getCategoriesData();
     printWarning(categories);
-    return categories;
   }
 
   getTransactionsData() async {
     TransactionsController request = TransactionsController();
     transactions = await request.getTransactionsData();
     printWarning(transactions);
-    return transactions;
   }
 
   initData() async {

@@ -2,11 +2,15 @@ import 'package:expenses_app/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../common/prints.dart';
 import '/controllers/transactions_controller.dart';
 import '/common/color_constants.dart';
 
 class CreatTransactionView extends StatefulWidget {
-  const CreatTransactionView({super.key, required this.categories});
+  const CreatTransactionView({
+    super.key,
+    required this.categories,
+  });
   final List categories;
 
   @override
@@ -19,6 +23,13 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
   final TextEditingController _transactionAmount = TextEditingController();
   bool isLoading = false;
 
+  List categories = [];
+  getCategoriesData() async {
+    TransactionsController request = TransactionsController();
+    categories = await request.getCategoriesData();
+    printWarning(categories);
+  }
+
   addTeansaction() async {
     TransactionsController request = TransactionsController();
     if (_transactionName.text.isNotEmpty &&
@@ -28,7 +39,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
       // });
 
       await request.addTransaction(
-        activeCategory: widget.categories[activeCategory],
+        activeCategory: categories[activeCategory],
         transactionName: _transactionName.text,
         transactionAmount: _transactionAmount.text,
         context: context,
@@ -84,21 +95,21 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
               ),
             ),
           ),
-          GetBuilder<TransactionsController>(
-            init: TransactionsController(),
-            builder: (controller) => Expanded(
-              child: isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        color: AppTheme.primaryColor,
-                      ),
-                    )
-                  : ListView(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(
-                        left: 15,
-                        top: 15,
-                      ),
+          Expanded(
+            child: isLoading
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: AppTheme.primaryColor,
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: categories.length,
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.only(
+                      left: 15,
+                      top: 15,
+                    ),
+                    itemBuilder: (context, index) => Column(
                       children: [
                         Text(
                           "Choose The Transaction Category",
@@ -114,7 +125,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: List.generate(
-                              widget.categories.length,
+                              categories.length,
                               (index) {
                                 return GestureDetector(
                                   onTap: () {
@@ -151,7 +162,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                                         child: Column(
                                           children: [
                                             Text(
-                                              widget.categories[index]['name'],
+                                              categories[index]['name'],
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 15,
@@ -229,17 +240,6 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                             InkWell(
                               onTap: () {
                                 addTeansaction();
-                                // controller.addTransaction(
-                                //   activeCategory: activeCategory,
-                                //   transactionName: _transactionName.text,
-                                //   transactionAmount: _transactionAmount.text,
-                                //   context: context,
-                                // );
-
-                                // setState(() {
-                                //   _transactionName.text = "";
-                                //   _transactionAmount.text = "";
-                                // });
                               },
                               borderRadius: BorderRadius.circular(15),
                               hoverColor: Colors.grey.withOpacity(0.2),
@@ -256,10 +256,10 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                               ),
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
-            ),
+                  ),
           ),
         ],
       ),

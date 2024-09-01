@@ -23,7 +23,7 @@ class AuthController {
         email: email,
         password: password,
       );
-      Get.offAll(() => BottomNavigationBarWidget());
+      Get.offAll(() => const BottomNavigationBarWidget());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         printWarning('The password provided is too weak.');
@@ -44,7 +44,7 @@ class AuthController {
         email: email,
         password: password,
       );
-      Get.offAll(() => BottomNavigationBarWidget());
+      Get.offAll(() => const BottomNavigationBarWidget());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
         printWarning('No user found with the used data.');
@@ -81,7 +81,7 @@ class AuthController {
 
     // Once signed in, return the UserCredential
     await FirebaseAuth.instance.signInWithCredential(credential);
-    Get.offAll(() => BottomNavigationBarWidget());
+    Get.offAll(() => const BottomNavigationBarWidget());
   }
 
   Future signout() async {

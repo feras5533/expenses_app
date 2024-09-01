@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '/common/color_constants.dart';
-import '/controllers/transactions_controller.dart';
+import 'transactions_controller.dart';
 
 class CategoriesController {
   BuildContext context;
@@ -10,10 +10,12 @@ class CategoriesController {
     required this.context,
   });
 
-  addCategoryPopup() {
+  addCategoryPopup(
+      //  {function,}
+      ) {
     TextEditingController titleController = TextEditingController();
 
-    return showDialog(
+    showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -37,22 +39,21 @@ class CategoriesController {
               ],
             ),
           ),
-          actions: <Widget>[
+          actions: [
             TextButton(
               child: const Text('cancel'),
               onPressed: () {
                 Get.back();
               },
             ),
-            GetBuilder<TransactionsController>(
-              init: TransactionsController(),
-              builder: (controller) => TextButton(
-                child: const Text('add'),
-                onPressed: () {
-                  controller.addCategory(name: titleController.text);
-                  Get.back();
-                },
-              ),
+            TextButton(
+              child: const Text('add'),
+              onPressed: () {
+                TransactionsController request = TransactionsController();
+                request.addCategory(name: titleController.text);
+                // function;
+                Get.back();
+              },
             ),
           ],
         );

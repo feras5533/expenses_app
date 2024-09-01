@@ -4,15 +4,21 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class TransactionsController extends GetxController {
-  var db = FirebaseFirestore.instance;
+import '/views/daily_transaction_view.dart';
+
+class TransactionsController {
+  CollectionReference transactions =
+      FirebaseFirestore.instance.collection('transactions');
+  CollectionReference categories =
+      FirebaseFirestore.instance.collection('categories');
+  CollectionReference total = FirebaseFirestore.instance.collection('total');
 
   addTransaction({
     required activeCategory,
     required transactionName,
     required transactionAmount,
     required context,
-  }) {
+  }) async {
     if (transactionName.isNotEmpty && transactionAmount.isNotEmpty) {
       DateTime now = DateTime.now();
       String formattedDate = DateFormat('yyyy-MM-dd').format(now);
@@ -22,14 +28,22 @@ class TransactionsController extends GetxController {
         "price": transactionAmount,
         "category": activeCategory['name'],
       };
-      db.collection("transactions").doc().set(transaction).onError(
-          (e, _) => printError("Error writing transactions document: $e"));
+      await transactions
+          .add(transaction)
+          .then(
+            (value) => Get.to(const DailyTransactionView()),
+          )
+          .onError(
+            (error, stackTrace) =>
+                printError("Error writing transactions document: $error"),
+          );
+      // db.collection("transactions").doc().set(transaction).onError(
+      //     (e, _) => printError("Error writing transactions document: $e"));
 
-      calcTotal(
-        // activeCategory: activeCategory,
-        transactionAmount: transactionAmount,
-      );
-      update();
+      // calcTotal(
+      // activeCategory: activeCategory,
+      // transactionAmount: transactionAmount,
+      // );
       customDialog(
         title: 'The Transaction Has Been Added',
         context: context,
@@ -41,23 +55,39 @@ class TransactionsController extends GetxController {
     }
   }
 
+  addCategory({
+    required String name,
+    color,
+  }) {
+    var category = <String, dynamic>{
+      "name": name,
+      "percentage": 0.0,
+      "total": 0.0,
+    };
+    categories.doc().set(category).onError(
+          (error, stackTrace) =>
+              printError("Error writing categories document: $error"),
+        );
+
+    getCategoriesData();
+  }
+
   calcTotal({
     // required activeCategory,
     required transactionAmount,
   }) async {
-    double total = 0.0;
+    double totalTransactions = 0.0;
 
     // activeCategory['total'] += double.parse(transactionAmount);
-    total += double.parse(transactionAmount);
+    // total += double.parse(transactionAmount);
 
     var totalStore = {
-      'total': total,
+      'total': totalTransactions,
     };
-    db
-        .collection("total")
-        .doc('total')
-        .set(totalStore)
-        .onError((e, _) => printError("Error writing total document: $e"));
+    total.add(totalStore).onError(
+          (error, stackTrace) =>
+              printError("Error writing total document: $error"),
+        );
   }
 
   calcCategoryTotal({
@@ -72,56 +102,32 @@ class TransactionsController extends GetxController {
     var totalStore = {
       'total': total,
     };
-    db
-        .collection("categories")
-        .doc()
-        .set(totalStore)
-        .onError((e, _) => printError("Error writing total document: $e"));
-  }
-
-  addCategory({
-    required String name,
-    color,
-  }) {
-    var category = <String, dynamic>{
-      "name": name,
-      "percentage": 0.0,
-      "total": 0.0,
-    };
-    db
-        .collection("categories")
-        .doc()
-        .set(category)
-        .onError((e, _) => printError("Error writing categories document: $e"));
-    getCategoriesData();
-    update();
+    categories.add(totalStore);
+    // db
+    //     .collection("categories")
+    //     .doc()
+    //     .set(totalStore)
+    //     .onError((e, _) => printError("Error writing total document: $e"));
   }
 
   getCategoriesData() async {
-    CollectionReference collectionRef =
-        FirebaseFirestore.instance.collection('categories');
-    // Get docs from collection reference
-    QuerySnapshot querySnapshot = await collectionRef.get();
+    QuerySnapshot querySnapshot = await categories.get();
 
-    // Get data from docs and convert map to List
-    var allData = querySnapshot.docs.map((doc) => doc.data()).toList();
-    return allData;
-    // categories.addAll(allData);
+    List categoriesList = querySnapshot.docs.map((doc) => doc.data()).toList();
+    printWarning(categoriesList);
+    return categoriesList;
   }
 
   getTransactionsData() async {
-    CollectionReference collectionRef =
-        FirebaseFirestore.instance.collection('transactions');
-    // Get docs from collection reference
-    QuerySnapshot querySnapshot = await collectionRef.get();
+    QuerySnapshot querySnapshot = await transactions.get();
 
-    // Get data from docs and convert map to List
-    final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
-    return allData;
-    // categories.addAll(allData);
+    List transactionsList =
+        querySnapshot.docs.map((doc) => doc.data()).toList();
+    printWarning(transactionsList);
+    return transactionsList;
   }
 
-  void calculatePercentages() {
+  calculatePercentages() {
     // double totalSum =
     //     categories.fold(0.0, (double sum, category) => sum + category["total"]);
 
