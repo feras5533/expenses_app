@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -23,7 +22,13 @@ class AuthController {
         email: email,
         password: password,
       );
-      Get.offAll(() => const BottomNavigationBarWidget());
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const BottomNavigationBarWidget(),
+        ),
+        (route) => true,
+      );
+      // Get.offAll(() => const BottomNavigationBarWidget());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         printWarning('The password provided is too weak.');
@@ -44,7 +49,13 @@ class AuthController {
         email: email,
         password: password,
       );
-      Get.offAll(() => const BottomNavigationBarWidget());
+      // Get.offAll(() => const BottomNavigationBarWidget());
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const BottomNavigationBarWidget(),
+        ),
+        (route) => true,
+      );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
         printWarning('No user found with the used data.');
@@ -81,13 +92,25 @@ class AuthController {
 
     // Once signed in, return the UserCredential
     await FirebaseAuth.instance.signInWithCredential(credential);
-    Get.offAll(() => const BottomNavigationBarWidget());
+    // Get.offAll(() => const BottomNavigationBarWidget());
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => const BottomNavigationBarWidget(),
+      ),
+      (route) => true,
+    );
   }
 
   Future signout() async {
     GoogleSignIn googleSignIn = GoogleSignIn();
     googleSignIn.disconnect();
     await FirebaseAuth.instance.signOut();
-    Get.offAll(() => const LoginView());
+    // Get.offAll(() => const LoginView());
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => const LoginView(),
+      ),
+      (route) => true,
+    );
   }
 }

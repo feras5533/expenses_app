@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '/common/color_constants.dart';
 import 'transactions_controller.dart';
@@ -43,7 +42,8 @@ class CategoriesController {
             TextButton(
               child: const Text('cancel'),
               onPressed: () {
-                Get.back();
+                // Get.back();
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
@@ -52,7 +52,8 @@ class CategoriesController {
                 TransactionsController request = TransactionsController();
                 request.addCategory(name: titleController.text);
                 // function;
-                Get.back();
+                // Get.back();
+                Navigator.of(context).pop();
               },
             ),
           ],

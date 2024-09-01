@@ -1,6 +1,6 @@
 import 'package:expenses_app/common/prints.dart';
 import 'package:expenses_app/widgets/custom_snackbar.dart';
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -30,9 +30,11 @@ class TransactionsController {
       };
       await transactions
           .add(transaction)
-          .then(
-            (value) => Get.to(const DailyTransactionView()),
-          )
+          .then((value) => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const DailyTransactionView(),
+                  ))
+              // Get.to(const DailyTransactionView()
+              )
           .onError(
             (error, stackTrace) =>
                 printError("Error writing transactions document: $error"),
@@ -114,7 +116,7 @@ class TransactionsController {
     QuerySnapshot querySnapshot = await categories.get();
 
     List categoriesList = querySnapshot.docs.map((doc) => doc.data()).toList();
-    printWarning(categoriesList);
+    // printWarning(categoriesList);
     return categoriesList;
   }
 
@@ -123,7 +125,7 @@ class TransactionsController {
 
     List transactionsList =
         querySnapshot.docs.map((doc) => doc.data()).toList();
-    printWarning(transactionsList);
+    // printWarning(transactionsList);
     return transactionsList;
   }
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '/views/login_view.dart';
 import '/controllers/auth_controller.dart';
@@ -37,6 +36,8 @@ class _SignUpViewState extends State<SignUpView> {
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    // var width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Center(
         child: ListView(
@@ -53,7 +54,7 @@ class _SignUpViewState extends State<SignUpView> {
                   ),
                 ),
                 SizedBox(
-                  height: Get.height * 0.01,
+                  height: height * 0.01,
                 ),
                 const Text(
                   "SignUp",
@@ -63,7 +64,7 @@ class _SignUpViewState extends State<SignUpView> {
                   ),
                 ),
                 SizedBox(
-                  height: Get.height * 0.01,
+                  height: height * 0.01,
                 ),
                 const Text(
                   "SignUp To Continue Using The App",
@@ -72,7 +73,7 @@ class _SignUpViewState extends State<SignUpView> {
                   ),
                 ),
                 SizedBox(
-                  height: Get.height * 0.02,
+                  height: height * 0.02,
                 ),
                 const Text(
                   "username",
@@ -86,7 +87,7 @@ class _SignUpViewState extends State<SignUpView> {
                   controller: _usernameController,
                 ),
                 SizedBox(
-                  height: Get.height * 0.02,
+                  height: height * 0.02,
                 ),
                 const Text(
                   "Email",
@@ -100,7 +101,7 @@ class _SignUpViewState extends State<SignUpView> {
                   controller: _emailController,
                 ),
                 SizedBox(
-                  height: Get.height * 0.02,
+                  height: height * 0.02,
                 ),
                 const Text(
                   "Password",
@@ -117,7 +118,7 @@ class _SignUpViewState extends State<SignUpView> {
               ],
             ),
             SizedBox(
-              height: Get.height * 0.03,
+              height: height * 0.03,
             ),
             CustomButton(
               title: "SignUp",
@@ -129,7 +130,9 @@ class _SignUpViewState extends State<SignUpView> {
             // Text("Don't Have An Account ? Resister" , textAlign: TextAlign.center,)
             InkWell(
               onTap: () {
-                Get.to(const LoginView());
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const LoginView(),
+                ));
               },
               child: const Center(
                 child: Text.rich(

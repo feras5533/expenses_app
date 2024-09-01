@@ -1,6 +1,5 @@
 import 'package:expenses_app/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '/widgets/custom_snackbar.dart';
 import '/widgets/custom_text_field.dart';
@@ -41,6 +40,8 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+     var height = MediaQuery.of(context).size.height;
+    // var width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Center(
         child: ListView(
@@ -57,7 +58,7 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
                 SizedBox(
-                  height: Get.height * 0.01,
+                  height: height * 0.01,
                 ),
                 const Text(
                   "Login",
@@ -67,7 +68,7 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
                 SizedBox(
-                  height: Get.height * 0.01,
+                  height: height * 0.01,
                 ),
                 Text(
                   "Login To Continue Using The App",
@@ -76,7 +77,7 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
                 SizedBox(
-                  height: Get.height * 0.02,
+                  height: height * 0.02,
                 ),
                 const Text(
                   "Email",
@@ -90,7 +91,7 @@ class _LoginViewState extends State<LoginView> {
                   controller: _emailController,
                 ),
                 SizedBox(
-                  height: Get.height * 0.02,
+                  height: height * 0.02,
                 ),
                 const Text(
                   "Password",
@@ -127,7 +128,7 @@ class _LoginViewState extends State<LoginView> {
                   login();
                 }),
             SizedBox(
-              height: Get.height * 0.02,
+              height: height * 0.02,
             ),
             const Center(
               child: Text(
@@ -138,7 +139,7 @@ class _LoginViewState extends State<LoginView> {
               ),
             ),
             SizedBox(
-              height: Get.height * 0.02,
+              height: height * 0.02,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -174,11 +175,11 @@ class _LoginViewState extends State<LoginView> {
               ],
             ),
             SizedBox(
-              height: Get.height * 0.02,
+              height: height * 0.02,
             ),
             InkWell(
               onTap: () {
-                Get.to(const SignUpView());
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SignUpView(),));
               },
               child: const Center(
                 child: Text.rich(

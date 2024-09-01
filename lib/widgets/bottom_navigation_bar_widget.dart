@@ -6,7 +6,6 @@ import '/common/color_constants.dart';
 import '/views/categories_view.dart';
 import '/views/create_transaction_view.dart';
 import '/views/daily_transaction_view.dart';
-import '/common/prints.dart';
 
 class BottomNavigationBarWidget extends StatefulWidget {
   const BottomNavigationBarWidget({super.key});
@@ -24,6 +23,11 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   }
 
   List<Widget> pages = [];
+  List<GlobalKey<NavigatorState>> navigatorKeys = [
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+  ];
   List categories = [];
   List transactions = [];
 
@@ -33,13 +37,21 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   getCategoriesData() async {
     TransactionsController request = TransactionsController();
     categories = await request.getCategoriesData();
-    printWarning(categories);
+    // printWarning(categories);
   }
 
   getTransactionsData() async {
     TransactionsController request = TransactionsController();
     transactions = await request.getTransactionsData();
-    printWarning(transactions);
+    // printWarning(transactions);
+  }
+
+  selectedTab(index) {
+    setState(() {
+      getCategoriesData();
+      getTransactionsData();
+      pageIndex = index;
+    });
   }
 
   initData() async {
@@ -49,14 +61,18 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
     pages = [
       DailyTransactionView(
         transactions: transactions,
+        key: navigatorKeys[0],
       ),
       CategoriesView(
         categories: categories,
+        key: navigatorKeys[1],
       ),
       CreatTransactionView(
         categories: categories,
+        key: navigatorKeys[2],
       ),
     ];
+
     setState(() {
       isLoading = false;
     });
@@ -72,7 +88,10 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
                 color: AppTheme.primaryColor,
               ),
             )
-          : body(),
+          : IndexedStack(
+              index: pageIndex,
+              children: pages,
+            ),
       bottomNavigationBar: navBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -86,13 +105,6 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    );
-  }
-
-  Widget body() {
-    return IndexedStack(
-      index: pageIndex,
-      children: pages,
     );
   }
 
@@ -117,13 +129,5 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
         selectedTab(index);
       },
     );
-  }
-
-  selectedTab(index) {
-    setState(() {
-      getCategoriesData();
-      getTransactionsData();
-      pageIndex = index;
-    });
   }
 }

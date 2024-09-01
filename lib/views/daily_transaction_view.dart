@@ -1,7 +1,7 @@
 import 'package:expenses_app/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
+import '../common/prints.dart';
 import '/common/color_constants.dart';
 import '/json/day_month.dart';
 
@@ -17,6 +17,12 @@ class DailyTransactionView extends StatefulWidget {
 }
 
 class _DailyTransactionViewState extends State<DailyTransactionView> {
+  @override
+  void initState() {
+    super.initState();
+    printWarning('DailyTransactionView init state');
+  }
+
   int activeDay = 3;
 
   signOut() {
@@ -26,6 +32,8 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
 
   @override
   Widget build(BuildContext context) {
+     var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Column(
         children: [
@@ -42,10 +50,10 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
             ),
             child: Padding(
               padding: EdgeInsets.only(
-                top: Get.height * 0.075,
-                right: Get.width * 0.05,
-                left: Get.width * 0.05,
-                bottom: Get.height * 0.03,
+                top: height * 0.075,
+                right: width * 0.05,
+                left: width * 0.05,
+                bottom: height * 0.03,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +78,7 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
                     ],
                   ),
                   SizedBox(
-                    height: Get.height * 0.03,
+                    height: height * 0.03,
                   ),
                   //change
                   Row(
@@ -85,7 +93,7 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
                             });
                           },
                           child: SizedBox(
-                            width: (Get.width * 0.9) / 7,
+                            width: (width * 0.9) / 7,
                             child: Column(
                               children: [
                                 Text(
@@ -95,10 +103,10 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: Get.height * 0.015,
+                                  height: height * 0.015,
                                 ),
                                 Container(
-                                  height: Get.height * 0.04,
+                                  height: height * 0.04,
                                   decoration: BoxDecoration(
                                     color: activeDay == index
                                         ? AppTheme.primaryColor
@@ -207,7 +215,7 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
           // ),
 
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: (Get.width * 0.1) / 2),
+            padding: EdgeInsets.symmetric(horizontal: (width * 0.1) / 2),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

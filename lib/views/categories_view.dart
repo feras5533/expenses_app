@@ -1,5 +1,5 @@
+import 'package:expenses_app/common/prints.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '/controllers/categories_controller.dart';
 import '/common/color_constants.dart';
@@ -17,6 +17,12 @@ class CategoriesView extends StatefulWidget {
 }
 
 class _CategoriesViewState extends State<CategoriesView> {
+  @override
+  void initState() {
+    super.initState();
+    printWarning('CategoriesView init state');
+  }
+
   int activeMonth = 3;
 
   bool isLoading = false;
@@ -41,6 +47,8 @@ class _CategoriesViewState extends State<CategoriesView> {
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: AppTheme.grey.withOpacity(0.08),
       body: Column(
@@ -58,10 +66,10 @@ class _CategoriesViewState extends State<CategoriesView> {
             ),
             child: Padding(
               padding: EdgeInsets.only(
-                top: Get.height * 0.075,
-                right: Get.width * 0.05,
-                left: Get.width * 0.05,
-                bottom: Get.height * 0.03,
+                top: height * 0.075,
+                right: width * 0.05,
+                left: width * 0.05,
+                bottom: height * 0.03,
               ),
               child: Column(
                 children: [
@@ -84,7 +92,7 @@ class _CategoriesViewState extends State<CategoriesView> {
                     ],
                   ),
                   SizedBox(
-                    height: Get.height * 0.03,
+                    height: height * 0.03,
                   ),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -164,11 +172,11 @@ class _CategoriesViewState extends State<CategoriesView> {
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: Get.width * 0.03),
+                              horizontal: width * 0.03,),
                           child: Column(children: [
                             Padding(
                               padding:
-                                  EdgeInsets.only(bottom: Get.height * 0.015),
+                                  EdgeInsets.only(bottom: height * 0.015),
                               child: Container(
                                 width: double.infinity,
                                 decoration: BoxDecoration(

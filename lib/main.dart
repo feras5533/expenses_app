@@ -2,7 +2,6 @@ import 'package:expenses_app/common/prints.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import 'views/login_view.dart';
 import 'widgets/bottom_navigation_bar_widget.dart';
@@ -37,7 +36,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       title: 'expenses app',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

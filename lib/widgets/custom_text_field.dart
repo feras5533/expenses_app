@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '/common/color_constants.dart';
 
@@ -22,7 +21,7 @@ class CustomTextField extends StatelessWidget {
       textInputAction: lastField ? TextInputAction.done : TextInputAction.next,
       cursorColor: AppTheme.primaryColor,
       onTapOutside: (event) {
-        Get.focusScope!.unfocus();
+        FocusScope.of(context).unfocus();
       },
       decoration: InputDecoration(
         hintText: hintText,
