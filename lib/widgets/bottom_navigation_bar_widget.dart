@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
+import '../common/prints.dart';
 import '/controllers/transactions_controller.dart';
 import '/common/color_constants.dart';
 import '/views/categories_view.dart';
@@ -37,19 +38,18 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   getCategoriesData() async {
     TransactionsController request = TransactionsController();
     categories = await request.getCategoriesData();
-    // printWarning(categories);
+    printWarning(categories);
   }
 
   getTransactionsData() async {
     TransactionsController request = TransactionsController();
     transactions = await request.getTransactionsData();
-    // printWarning(transactions);
+    printWarning(transactions);
   }
 
   selectedTab(index) {
     setState(() {
-      getCategoriesData();
-      getTransactionsData();
+      initData();
       pageIndex = index;
     });
   }
@@ -64,7 +64,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
         key: navigatorKeys[0],
       ),
       CategoriesView(
-        categories: categories,
+        // categories: categories,
         key: navigatorKeys[1],
       ),
       CreatTransactionView(
@@ -95,6 +95,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
       bottomNavigationBar: navBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          initData();
           selectedTab(2);
         },
         shape: const CircleBorder(),

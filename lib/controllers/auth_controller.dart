@@ -26,9 +26,8 @@ class AuthController {
         MaterialPageRoute(
           builder: (context) => const BottomNavigationBarWidget(),
         ),
-        (route) => true,
+        (route) => false,
       );
-      // Get.offAll(() => const BottomNavigationBarWidget());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         printWarning('The password provided is too weak.');
@@ -49,12 +48,11 @@ class AuthController {
         email: email,
         password: password,
       );
-      // Get.offAll(() => const BottomNavigationBarWidget());
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => const BottomNavigationBarWidget(),
         ),
-        (route) => true,
+        (route) => false,
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
@@ -74,30 +72,25 @@ class AuthController {
   }
 
   Future signInWithGoogle() async {
-    // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     if (googleUser == null) {
       return;
     }
 
-    // Obtain the auth details from the request
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
 
-    // Create a new credential
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
 
-    // Once signed in, return the UserCredential
     await FirebaseAuth.instance.signInWithCredential(credential);
-    // Get.offAll(() => const BottomNavigationBarWidget());
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => const BottomNavigationBarWidget(),
       ),
-      (route) => true,
+      (route) => false,
     );
   }
 
@@ -105,12 +98,11 @@ class AuthController {
     GoogleSignIn googleSignIn = GoogleSignIn();
     googleSignIn.disconnect();
     await FirebaseAuth.instance.signOut();
-    // Get.offAll(() => const LoginView());
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => const LoginView(),
       ),
-      (route) => true,
+      (route) => false,
     );
   }
 }

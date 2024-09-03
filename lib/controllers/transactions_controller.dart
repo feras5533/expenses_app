@@ -1,5 +1,6 @@
 import 'package:expenses_app/common/prints.dart';
 import 'package:expenses_app/widgets/custom_snackbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +13,7 @@ class TransactionsController {
   CollectionReference categories =
       FirebaseFirestore.instance.collection('categories');
   CollectionReference total = FirebaseFirestore.instance.collection('total');
+  String userId = FirebaseAuth.instance.currentUser!.uid;
 
   addTransaction({
     required activeCategory,
@@ -23,6 +25,7 @@ class TransactionsController {
       DateTime now = DateTime.now();
       String formattedDate = DateFormat('yyyy-MM-dd').format(now);
       var transaction = {
+        "id": userId,
         "name": transactionName,
         "date": formattedDate,
         "price": transactionAmount,
@@ -31,27 +34,18 @@ class TransactionsController {
       await transactions
           .add(transaction)
           .then((value) => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const DailyTransactionView(),
-                  ))
-              // Get.to(const DailyTransactionView()
-              )
+                builder: (context) => const DailyTransactionView(),
+              )))
           .onError(
             (error, stackTrace) =>
                 printError("Error writing transactions document: $error"),
           );
-      // db.collection("transactions").doc().set(transaction).onError(
-      //     (e, _) => printError("Error writing transactions document: $e"));
 
-      // calcTotal(
-      // activeCategory: activeCategory,
-      // transactionAmount: transactionAmount,
-      // );
       customDialog(
         title: 'The Transaction Has Been Added',
         context: context,
         error: false,
       );
-      // calculatePercentages();
     } else {
       customDialog(title: 'Please fill both the fields', context: context);
     }
@@ -62,6 +56,7 @@ class TransactionsController {
     color,
   }) {
     var category = <String, dynamic>{
+      "id": userId,
       "name": name,
       "percentage": 0.0,
       "total": 0.0,
@@ -70,8 +65,23 @@ class TransactionsController {
           (error, stackTrace) =>
               printError("Error writing categories document: $error"),
         );
+  }
 
-    getCategoriesData();
+  getCategoriesData() async {
+    QuerySnapshot querySnapshot =
+        await categories.where("id", isEqualTo: userId).get();
+
+    List categoriesList = querySnapshot.docs.map((doc) => doc.data()).toList();
+    return categoriesList;
+  }
+
+  getTransactionsData() async {
+    QuerySnapshot querySnapshot =
+        await transactions.where("id", isEqualTo: userId).get();
+
+    List transactionsList =
+        querySnapshot.docs.map((doc) => doc.data()).toList();
+    return transactionsList;
   }
 
   calcTotal({
@@ -110,23 +120,6 @@ class TransactionsController {
     //     .doc()
     //     .set(totalStore)
     //     .onError((e, _) => printError("Error writing total document: $e"));
-  }
-
-  getCategoriesData() async {
-    QuerySnapshot querySnapshot = await categories.get();
-
-    List categoriesList = querySnapshot.docs.map((doc) => doc.data()).toList();
-    // printWarning(categoriesList);
-    return categoriesList;
-  }
-
-  getTransactionsData() async {
-    QuerySnapshot querySnapshot = await transactions.get();
-
-    List transactionsList =
-        querySnapshot.docs.map((doc) => doc.data()).toList();
-    // printWarning(transactionsList);
-    return transactionsList;
   }
 
   calculatePercentages() {

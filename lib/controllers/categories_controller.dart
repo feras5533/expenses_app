@@ -42,7 +42,6 @@ class CategoriesController {
             TextButton(
               child: const Text('cancel'),
               onPressed: () {
-                // Get.back();
                 Navigator.of(context).pop();
               },
             ),
@@ -52,7 +51,6 @@ class CategoriesController {
                 TransactionsController request = TransactionsController();
                 request.addCategory(name: titleController.text);
                 // function;
-                // Get.back();
                 Navigator.of(context).pop();
               },
             ),
