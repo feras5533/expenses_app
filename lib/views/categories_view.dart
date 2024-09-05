@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../controllers/transactions_controller.dart';
+import '../widgets/custom_scaffold.dart';
 import '/controllers/categories_controller.dart';
 import '/common/color_constants.dart';
 import '/json/day_month.dart';
@@ -48,115 +49,13 @@ class _CategoriesViewState extends State<CategoriesView> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      backgroundColor: AppTheme.grey.withOpacity(0.08),
+    return customScaffold(
+      toolbarHeight: height * 0.2,
+      appBarTitle: appBar(
+        height: height,
+      ),
       body: Column(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: AppTheme.white,
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.grey.withOpacity(0.08),
-                  spreadRadius: 10,
-                  blurRadius: 3,
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(
-                top: height * 0.075,
-                right: width * 0.05,
-                left: width * 0.05,
-                bottom: height * 0.03,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Categories",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.black),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          addCategory();
-                        },
-                        icon: const Icon(Icons.add),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: height * 0.03,
-                  ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: List.generate(
-                        months.length,
-                        (index) {
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                activeMonth = index;
-                              });
-                            },
-                            child: SizedBox(
-                              width:
-                                  (MediaQuery.of(context).size.width - 40) / 6,
-                              child: Column(
-                                children: [
-                                  Text(
-                                    months[index]['label'],
-                                    style: const TextStyle(fontSize: 10),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        color: activeMonth == index
-                                            ? AppTheme.primaryColor
-                                            : AppTheme.black.withOpacity(0.02),
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(
-                                            color: activeMonth == index
-                                                ? AppTheme.primaryColor
-                                                : AppTheme.black
-                                                    .withOpacity(0.1))),
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 12,
-                                          right: 12,
-                                          top: 7,
-                                          bottom: 7),
-                                      child: Text(
-                                        months[index]['day'],
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w600,
-                                            color: activeMonth == index
-                                                ? AppTheme.white
-                                                : AppTheme.black),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
           isLoading
               ? Center(
                   child: CircularProgressIndicator(
@@ -302,6 +201,91 @@ class _CategoriesViewState extends State<CategoriesView> {
           ),
         ),
       ),
+    );
+  }
+
+  appBar({
+    height,
+  }) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Categories",
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.black),
+            ),
+            IconButton(
+              onPressed: () {
+                addCategory();
+              },
+              icon: const Icon(Icons.add),
+            )
+          ],
+        ),
+        SizedBox(
+          height: height * 0.03,
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: List.generate(
+              months.length,
+              (index) {
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      activeMonth = index;
+                    });
+                  },
+                  child: SizedBox(
+                    width: (MediaQuery.of(context).size.width - 40) / 6,
+                    child: Column(
+                      children: [
+                        Text(
+                          months[index]['label'],
+                          style: const TextStyle(fontSize: 10),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: activeMonth == index
+                                  ? AppTheme.primaryColor
+                                  : AppTheme.black.withOpacity(0.02),
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(
+                                  color: activeMonth == index
+                                      ? AppTheme.primaryColor
+                                      : AppTheme.black.withOpacity(0.1))),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 12, right: 12, top: 7, bottom: 7),
+                            child: Text(
+                              months[index]['day'],
+                              style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  color: activeMonth == index
+                                      ? AppTheme.white
+                                      : AppTheme.black),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        )
+      ],
     );
   }
 }

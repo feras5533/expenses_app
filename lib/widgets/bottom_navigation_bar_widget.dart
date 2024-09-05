@@ -1,3 +1,5 @@
+import 'package:expenses_app/views/profile_view.dart';
+import 'package:expenses_app/views/stats_view.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
@@ -25,6 +27,8 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
 
   List<Widget> pages = [];
   List<GlobalKey<NavigatorState>> navigatorKeys = [
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
@@ -61,15 +65,21 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
     pages = [
       DailyTransactionView(
         transactions: transactions,
-        key: navigatorKeys[0],
+        key: navigatorKeys[1],
       ),
       CategoriesView(
         // categories: categories,
-        key: navigatorKeys[1],
+        key: navigatorKeys[2],
+      ),
+      StatsView(
+        key: navigatorKeys[4],
+      ),
+      ProfileView(
+        key: navigatorKeys[3],
       ),
       CreatTransactionView(
         categories: categories,
-        key: navigatorKeys[2],
+        key: navigatorKeys[0],
       ),
     ];
 
@@ -96,7 +106,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           initData();
-          selectedTab(2);
+          selectedTab(4);
         },
         shape: const CircleBorder(),
         backgroundColor: Colors.green,
@@ -111,8 +121,10 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
 
   Widget navBar() {
     List<IconData> iconItems = [
-      Icons.calendar_month,
       Icons.wallet,
+      Icons.calendar_month,
+      Icons.stacked_bar_chart,
+      Icons.person,
     ];
 
     return AnimatedBottomNavigationBar(

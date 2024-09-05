@@ -1,6 +1,7 @@
 import 'package:expenses_app/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 
+import '../common/images_urls.dart';
 import '/widgets/custom_snackbar.dart';
 import '/widgets/custom_text_field.dart';
 import '/widgets/custom_button.dart';
@@ -40,7 +41,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-     var height = MediaQuery.of(context).size.height;
+    var height = MediaQuery.of(context).size.height;
     // var width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Center(
@@ -151,7 +152,7 @@ class _LoginViewState extends State<LoginView> {
                       context: context,
                     );
                   },
-                  icon: Image.asset('assets/images/facebook_logo.png'),
+                  icon: Image.asset(ImagesUrls.facebookLogo),
                 ),
                 IconButton(
                   onPressed: () {
@@ -160,7 +161,7 @@ class _LoginViewState extends State<LoginView> {
                       context: context,
                     );
                   },
-                  icon: Image.asset('assets/images/apple_logo.png'),
+                  icon: Image.asset(ImagesUrls.appleLogo),
                 ),
                 IconButton(
                   onPressed: () {
@@ -170,7 +171,7 @@ class _LoginViewState extends State<LoginView> {
                     // );
                     loginWithGoogle();
                   },
-                  icon: Image.asset('assets/images/google_logo.png'),
+                  icon: Image.asset(ImagesUrls.googleLogo),
                 ),
               ],
             ),
@@ -179,7 +180,9 @@ class _LoginViewState extends State<LoginView> {
             ),
             InkWell(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SignUpView(),));
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const SignUpView(),
+                ));
               },
               child: const Center(
                 child: Text.rich(

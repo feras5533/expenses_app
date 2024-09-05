@@ -1,3 +1,4 @@
+import 'package:expenses_app/widgets/custom_scaffold.dart';
 import 'package:expenses_app/widgets/custom_snackbar.dart';
 import 'package:flutter/material.dart';
 
@@ -66,42 +67,15 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      backgroundColor: AppTheme.grey.withOpacity(0.05),
+    return customScaffold(
+      toolbarHeight: height * 0.08,
+      appBarTitle: Text(
+        "Create A Transaction",
+        style: TextStyle(
+            fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.black),
+      ),
       body: Column(
         children: [
-          Container(
-            decoration: BoxDecoration(color: AppTheme.white, boxShadow: [
-              BoxShadow(
-                color: AppTheme.grey.withOpacity(0.08),
-                spreadRadius: 10,
-                blurRadius: 3,
-              ),
-            ]),
-            child: Padding(
-              padding: EdgeInsets.only(
-                top: height * 0.075,
-                right: width * 0.05,
-                left: width * 0.05,
-                bottom: height * 0.03,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "Create A Transaction",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.black),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
           Expanded(
             child: isLoading
                 ? Center(
