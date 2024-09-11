@@ -1,4 +1,5 @@
 import 'package:expenses_app/common/prints.dart';
+import 'package:expenses_app/models/categories_model.dart';
 import 'package:expenses_app/widgets/custom_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class TransactionsController {
       FirebaseFirestore.instance.collection('categories');
   CollectionReference total = FirebaseFirestore.instance.collection('total');
   String userId = FirebaseAuth.instance.currentUser!.uid;
+
 
   addTransaction({
     required activeCategory,
@@ -68,11 +70,16 @@ class TransactionsController {
   }
 
   getCategoriesData() async {
-    QuerySnapshot querySnapshot =
-        await categories.where("id", isEqualTo: userId).get();
+    // List<CollectionReference<CategoriesModel>?> data;
 
-    List categoriesList = querySnapshot.docs.map((doc) => doc.data()).toList();
-    return categoriesList;
+    // QuerySnapshot querySnapshot =
+    //     await categories.where("id", isEqualTo: userId).get();
+
+    return categories.withConverter<CategoriesModel>(
+      fromFirestore: (snapshot, options) =>
+          CategoriesModel.fromFirestore(snapshot, options),
+      toFirestore: (user, options) => user.toFirestore(),
+    );
   }
 
   getTransactionsData() async {
@@ -82,6 +89,11 @@ class TransactionsController {
     List transactionsList =
         querySnapshot.docs.map((doc) => doc.data()).toList();
     return transactionsList;
+    //  return transactions.withConverter<CategoriesModel>(
+    //   fromFirestore: (snapshot, options) =>
+    //       CategoriesModel.fromFirestore(snapshot, options),
+    //   toFirestore: (user, options) => user.toFirestore(),
+    // );
   }
 
   calcTotal({

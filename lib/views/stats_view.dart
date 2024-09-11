@@ -10,7 +10,7 @@ class StatsView extends StatefulWidget {
 class _StatsViewState extends State<StatsView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Text('Under Development'),
       ),

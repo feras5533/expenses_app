@@ -1,33 +1,53 @@
-import 'package:expenses_app/common/images_urls.dart';
-import 'package:expenses_app/widgets/custom_button.dart';
-import 'package:expenses_app/widgets/custom_snackbar.dart';
-import 'package:expenses_app/widgets/custom_text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../widgets/custom_scaffold.dart';
-import '/common/color_constants.dart';
+import '../controllers/user_controller.dart';
+import '/common/images_urls.dart';
+import '/widgets/custom_button.dart';
+import '/widgets/custom_snackbar.dart';
+import '/widgets/custom_text_field.dart';
+import '/widgets/custom_scaffold.dart';
 import '/controllers/auth_controller.dart';
+import '/common/color_constants.dart';
+import '/models/user_model.dart';
 
 class ProfileView extends StatefulWidget {
-  const ProfileView({super.key});
+  const ProfileView({
+    super.key,
+  });
 
   @override
   State<ProfileView> createState() => _ProfileViewState();
 }
 
 class _ProfileViewState extends State<ProfileView> {
-  final TextEditingController _userNameController =
-      TextEditingController(text: 'Feras Atiyat');
-  final TextEditingController _emailController =
-      TextEditingController(text: 'feras@gmail.com');
-  final TextEditingController _phoneController =
-      TextEditingController(text: '+962790363835');
-  final TextEditingController _passwordController =
-      TextEditingController(text: '12345678');
+  @override
+  void initState() {
+    getUserData();
+    super.initState();
+  }
 
+  final TextEditingController _userNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  String userId = FirebaseAuth.instance.currentUser!.uid;
+  bool isLoading = true;
   bool isEditing = false;
+  bool isHidden = true;
+  CollectionReference<UserModel>? data;
 
-  signOut() {
+  getUserData() async {
+    UserController request = UserController(context: context);
+    data = await request.getUserData();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void signOut() {
     AuthController request = AuthController(context: context);
     request.signout();
   }
@@ -39,125 +59,165 @@ class _ProfileViewState extends State<ProfileView> {
     return customScaffold(
       toolbarHeight: height * 0.1,
       appBarTitle: appBar(width: width),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: height * 0.04,
-            ),
-            Stack(
-              alignment: AlignmentDirectional.bottomEnd,
-              children: [
-                Container(
-                  height: height * 0.12,
-                  decoration: BoxDecoration(
-                    // color: AppTheme.grey,
-                    border: Border.all(
-                      color: AppTheme.black,
-                      width: 0.5,
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+              color: AppTheme.primaryColor,
+            ))
+          : StreamBuilder<QuerySnapshot<UserModel>>(
+              stream: data!.where('id', isEqualTo: userId).snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                      child: CircularProgressIndicator(
+                    color: AppTheme.primaryColor,
+                  ));
+                } else {
+                  List<UserModel> userList =
+                      snapshot.data!.docs.map((doc) => doc.data()).toList();
+
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: width * 0.04),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: height * 0.04,
+                          ),
+                          Stack(
+                            alignment: AlignmentDirectional.bottomEnd,
+                            children: [
+                              Container(
+                                height: height * 0.12,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: AppTheme.black,
+                                    width: 0.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Image.asset(
+                                  ImagesUrls.profileImage,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  customDialog(
+                                      title:
+                                          'This feature is not available yet',
+                                      context: context);
+                                },
+                                icon: const Icon(
+                                  Icons.edit,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isEditing = !isEditing;
+                                  });
+                                },
+                                icon: Row(
+                                  children: [
+                                    const Text(
+                                      'Edit',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(
+                                      width: width * 0.02,
+                                    ),
+                                    const Icon(
+                                      Icons.edit,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          userList.isNotEmpty
+                              ? ListView.builder(
+                                  itemCount: userList.length,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    final UserModel user = userList[index];
+                                    _userNameController.text = user.name!;
+                                    _phoneController.text = user.phoneNumber!;
+                                    _emailController.text = FirebaseAuth
+                                        .instance.currentUser!.email!;
+                                    return customFields(
+                                        height: height, width: width);
+                                  },
+                                )
+                              : customFields(height: height, width: width),
+                        ],
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: Image.asset(
-                    ImagesUrls.profileImage,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    customDialog(
-                        title: 'This feature is not available yet',
-                        context: context);
-                  },
-                  icon: const Icon(
-                    Icons.edit,
-                  ),
-                ),
-              ],
+                  );
+                }
+              },
             ),
-            SizedBox(
-              height: height * 0.04,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isEditing = !isEditing;
-                    });
-                  },
-                  icon: Row(
-                    children: [
-                      const Text(
-                        'Edit',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        width: width * 0.02,
-                      ),
-                      const Icon(
-                        Icons.edit,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            ListView(
-              padding: EdgeInsets.symmetric(horizontal: width * 0.05),
-              shrinkWrap: true,
-              children: [
-                Text('Name'),
-                CustomTextField(
-                  hintText: 'User Name',
-                  controller: _userNameController,
-                  isProfileField: true,
-                  isEnabled: isEditing,
-                ),
-                SizedBox(
-                  height: height * 0.025,
-                ),
-                Text('Email'),
-                CustomTextField(
-                  hintText: 'Email',
-                  controller: _emailController,
-                  isProfileField: true,
-                  isEnabled: isEditing,
-                ),
-                SizedBox(
-                  height: height * 0.025,
-                ),
-                Text('Phone Number'),
-                CustomTextField(
-                  hintText: 'Phone Number',
-                  controller: _phoneController,
-                  isProfileField: true,
-                  isEnabled: isEditing,
-                ),
-                SizedBox(
-                  height: height * 0.025,
-                ),
-                Text('Password'),
-                CustomTextField(
-                  hintText: 'Password',
-                  controller: _passwordController,
-                  isProfileField: true,
-                  lastField: true,
-                  isEnabled: isEditing,
-                ),
-                SizedBox(
-                  height: height * 0.025,
-                ),
-                if (isEditing)
-                  CustomButton(
-                    title: 'Edit',
-                    onPressed: () {},
-                  )
-              ],
-            ),
-          ],
+    );
+  }
+
+  customFields({
+    required height,
+    required width,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Name'),
+        CustomTextField(
+          hintText: 'User Name',
+          controller: _userNameController,
+          isEnabled: isEditing,
         ),
-      ),
+        SizedBox(
+          height: height * 0.025,
+        ),
+        const Text('Email'),
+        CustomTextField(
+          hintText: 'Email',
+          controller: _emailController,
+          isEnabled: isEditing,
+        ),
+        SizedBox(
+          height: height * 0.025,
+        ),
+        const Text('Phone Number'),
+        CustomTextField(
+          hintText: 'Phone Number',
+          controller: _phoneController,
+          isEnabled: isEditing,
+        ),
+        SizedBox(
+          height: height * 0.025,
+        ),
+        const Text('Password'),
+        CustomTextField(
+          hintText: 'Password',
+          controller: _passwordController,
+          lastField: true,
+          isEnabled: isEditing,
+          isPassword: true,
+          isHidden: isHidden,
+        ),
+        SizedBox(
+          height: height * 0.025,
+        ),
+        if (isEditing)
+          CustomButton(
+            title: 'Edit',
+            width: width * 1,
+            onPressed: () {},
+          ),
+      ],
     );
   }
 

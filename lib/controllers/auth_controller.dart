@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,26 +14,49 @@ class AuthController {
     required this.context,
   });
 
+  CollectionReference userData =
+      FirebaseFirestore.instance.collection('userData');
+
   Future createUserWithEmailAndPassword({
     required email,
     required password,
+    required userName,
+    required phoneNumber,
   }) async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => const BottomNavigationBarWidget(),
-        ),
-        (route) => false,
-      );
+      if (email.isNotEmpty &&
+          password.isNotEmpty &&
+          userName.isNotEmpty &&
+          phoneNumber.isNotEmpty) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        String userId = FirebaseAuth.instance.currentUser!.uid;
+        var data = {
+          "id": userId,
+          "name": userName,
+          "phoneNumber": phoneNumber,
+        };
+        await userData.add(data).then(
+              (value) => Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => const BottomNavigationBarWidget(),
+                ),
+                (route) => false,
+              ),
+            );
+      } else {
+        customDialog(title: 'All the fields must be filled', context: context);
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        printWarning('The password provided is too weak.');
+        customDialog(
+            title: 'The password provided is too weak', context: context);
       } else if (e.code == 'email-already-in-use') {
-        printWarning('The account already exists for that email.');
+        customDialog(
+            title: 'The account already exists for that email',
+            context: context);
       }
     } catch (e) {
       printError(e);
@@ -44,28 +68,35 @@ class AuthController {
     required password,
   }) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => const BottomNavigationBarWidget(),
-        ),
-        (route) => false,
-      );
+      if (email.isNotEmpty && password.isNotEmpty) {
+        await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+              email: email,
+              password: password,
+            )
+            .then(
+              (value) => Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => const BottomNavigationBarWidget(),
+                ),
+                (route) => false,
+              ),
+            );
+      } else {
+        customDialog(title: 'All the fields must be filled', context: context);
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        printWarning('No user found with the used data.');
+        printError(e);
         customDialog(
-          title: 'user not found.1',
-          context: context.mounted,
+          title: 'No user found with the used data.',
+          context: context,
         );
       } else {
         printError(e);
         customDialog(
-          title: 'No user found with the \nused data.',
-          context: context.mounted,
+          title: 'No user found with the used data.',
+          context: context,
         );
       }
     }
@@ -86,6 +117,8 @@ class AuthController {
     );
 
     await FirebaseAuth.instance.signInWithCredential(credential);
+    if (!context.mounted) return;
+
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => const BottomNavigationBarWidget(),
@@ -98,6 +131,8 @@ class AuthController {
     GoogleSignIn googleSignIn = GoogleSignIn();
     googleSignIn.disconnect();
     await FirebaseAuth.instance.signOut();
+    if (!context.mounted) return;
+
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => const LoginView(),

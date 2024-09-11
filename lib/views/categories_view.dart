@@ -1,9 +1,10 @@
-import 'package:expenses_app/common/prints.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expenses_app/models/categories_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-
-import '../controllers/transactions_controller.dart';
-import '../widgets/custom_scaffold.dart';
+import '/controllers/transactions_controller.dart';
+import '/widgets/custom_scaffold.dart';
 import '/controllers/categories_controller.dart';
 import '/common/color_constants.dart';
 import '/json/day_month.dart';
@@ -11,10 +12,8 @@ import '/json/day_month.dart';
 class CategoriesView extends StatefulWidget {
   const CategoriesView({
     super.key,
-    // required this.categories,
   });
 
-  // final List categories;
   @override
   _CategoriesViewState createState() => _CategoriesViewState();
 }
@@ -22,22 +21,21 @@ class CategoriesView extends StatefulWidget {
 class _CategoriesViewState extends State<CategoriesView> {
   @override
   void initState() {
-    super.initState();
-    printWarning('CategoriesView init state');
     getCategoriesData();
+    super.initState();
   }
 
+  String userId = FirebaseAuth.instance.currentUser!.uid;
+
   int activeMonth = 3;
-
   bool isLoading = true;
-  List categories = [];
-
+  CollectionReference<CategoriesModel>? categories;
   getCategoriesData() async {
     TransactionsController request = TransactionsController();
     categories = await request.getCategoriesData();
-    printWarning(categories);
-    isLoading = false;
-    setState(() {});
+    setState(() {
+      isLoading = false;
+    });
   }
 
   addCategory() async {
@@ -54,35 +52,53 @@ class _CategoriesViewState extends State<CategoriesView> {
       appBarTitle: appBar(
         height: height,
       ),
-      body: Column(
-        children: [
-          isLoading
-              ? Center(
-                  child: CircularProgressIndicator(
+      //.where('id', isEqualTo: userId)
+
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: AppTheme.primaryColor,
+              ),
+            )
+          : StreamBuilder<QuerySnapshot<CategoriesModel>>(
+              stream: categories!.where('id', isEqualTo: userId).snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                      child: CircularProgressIndicator(
                     color: AppTheme.primaryColor,
-                  ),
-                )
-              : ListView.builder(
-                  padding: EdgeInsets.only(top: 20),
-                  shrinkWrap: true,
-                  itemCount: categories.length,
-                  itemBuilder: (context, index) => customCategory(
-                    height: height,
-                    width: width,
-                    name: categories[index]['name'],
-                    total: categories[index]['total'],
-                    percentage: categories[index]['percentage'],
-                  ),
-                ),
-        ],
-      ),
+                  ));
+                } else if (snapshot.hasData) {
+                  List<CategoriesModel> categoriesList =
+                      snapshot.data!.docs.map((doc) => doc.data()).toList();
+                  return ListView.builder(
+                      padding: const EdgeInsets.only(top: 20),
+                      shrinkWrap: true,
+                      itemCount: categoriesList.length,
+                      itemBuilder: (context, index) {
+                        final CategoriesModel category = categoriesList[index];
+
+                        return customCategory(
+                          height: height,
+                          width: width,
+                          name: category.name,
+                          total: category.total,
+                          percentage: category.percentage,
+                        );
+                      });
+                } else {
+                  return const Center(
+                    child: Text('There is no Categories yet\n Try Adding some'),
+                  );
+                }
+              }),
     );
   }
 
   customCategory({
     required height,
     required width,
-    required String name,
+    required name,
     required total,
     required percentage,
   }) {

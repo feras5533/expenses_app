@@ -1,24 +1,25 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Categories {
-  final String? name;
-  final Double? percentage;
-  final Double? total;
+class CategoriesModel {
+  final String? id;
+  final String name;
+  final double percentage;
+  final double total;
 
-  Categories({
-    this.name,
-    this.percentage,
-    this.total,
+  CategoriesModel({
+    this.id,
+    required this.name,
+    required this.percentage,
+    required this.total,
   });
 
-  factory Categories.fromFirestore(
+  factory CategoriesModel.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
   ) {
     final data = snapshot.data();
-    return Categories(
+    return CategoriesModel(
+      id: data?['id'],
       name: data?['name'],
       percentage: data?['percentage'],
       total: data?['total'],
@@ -27,9 +28,10 @@ class Categories {
 
   Map<String, dynamic> toFirestore() {
     return {
-      if (name != null) "name": name,
-      if (percentage != null) "percentage": percentage,
-      if (total != null) "country": total,
+      if (id != null) "id": id,
+      "name": name,
+      "percentage": percentage,
+      "total": total,
     };
   }
 }

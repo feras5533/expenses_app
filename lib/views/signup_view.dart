@@ -16,13 +16,18 @@ class _SignUpViewState extends State<SignUpView> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+
+  bool isHidden = true;
 
   signUp() {
     var request = AuthController(context: context);
 
     request.createUserWithEmailAndPassword(
+      userName: _usernameController.text,
       email: _emailController.text,
       password: _passwordController.text,
+      phoneNumber: _phoneNumberController.text,
     );
   }
 
@@ -113,6 +118,22 @@ class _SignUpViewState extends State<SignUpView> {
                 CustomTextField(
                   hintText: "ُEnter Your Password",
                   controller: _passwordController,
+                  isPassword: true,
+                  isHidden: isHidden,
+                ),
+                SizedBox(
+                  height: height * 0.02,
+                ),
+                const Text(
+                  "Phone Number",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+                CustomTextField(
+                  hintText: "ُEnter Your Phone Number",
+                  controller: _phoneNumberController,
                   lastField: true,
                 ),
               ],

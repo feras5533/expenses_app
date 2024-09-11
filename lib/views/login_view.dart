@@ -19,6 +19,8 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool isHidden = true;
+
   login() {
     var request = AuthController(context: context);
     request.signInWithEmailAndPassword(
@@ -104,6 +106,8 @@ class _LoginViewState extends State<LoginView> {
                 CustomTextField(
                   hintText: "ُEnter Your Password",
                   controller: _passwordController,
+                  isPassword: true,
+                  isHidden: isHidden,
                 ),
                 InkWell(
                   onTap: () {},
