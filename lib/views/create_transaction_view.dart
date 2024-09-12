@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expenses_app/common/prints.dart';
 import 'package:expenses_app/widgets/custom_scaffold.dart';
 import 'package:expenses_app/widgets/custom_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,12 +24,14 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
     getCategoriesData();
   }
 
-  int activeCategory = 0;
   final TextEditingController _transactionName = TextEditingController();
   final TextEditingController _transactionAmount = TextEditingController();
   String userId = FirebaseAuth.instance.currentUser!.uid;
 
   CollectionReference<CategoriesModel>? categories;
+
+  int activeCategory = 0;
+  String categoryName = '';
   bool isLoading = true;
   getCategoriesData() async {
     TransactionsController request = TransactionsController();
@@ -44,7 +47,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
         _transactionAmount.text.isNotEmpty) {
       await request.addTransaction(
         //categories[activeCategory]
-        activeCategory: 'test',
+        activeCategory: categoryName,
         transactionName: _transactionName.text,
         transactionAmount: _transactionAmount.text,
         context: context,
@@ -95,70 +98,84 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                           .where('id', isEqualTo: userId)
                           .snapshots(),
                       builder: (context, snapshot) {
-                        List<CategoriesModel> categoriesList = snapshot
-                            .data!.docs
-                            .map((doc) => doc.data())
-                            .toList();
+                        if (snapshot.hasData) {
+                          List<CategoriesModel> categoriesList = snapshot
+                              .data!.docs
+                              .map((doc) => doc.data())
+                              .toList();
 
-                        return SizedBox(
-                          height: 100,
-                          child: ListView.builder(
-                            itemCount: categoriesList.length,
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              final CategoriesModel category =
-                                  categoriesList[index];
+                          return SizedBox(
+                            height: 100,
+                            child: ListView.builder(
+                              itemCount: categoriesList.length,
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                final CategoriesModel category =
+                                    categoriesList[index];
 
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(
-                                    () {
-                                      activeCategory = index;
-                                    },
-                                  );
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(
-                                    7,
-                                  ),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: AppTheme.white,
-                                        border: Border.all(
-                                            width: 2,
-                                            color: activeCategory == index
-                                                ? AppTheme.primaryColor
-                                                : Colors.transparent),
-                                        borderRadius: BorderRadius.circular(12),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                AppTheme.grey.withOpacity(0.3),
-                                            spreadRadius: 2,
-                                            blurRadius: 2,
-                                          ),
-                                        ]),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(25),
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            category.name,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15,
+                                return Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(
+                                          () {
+                                            activeCategory = index;
+                                            categoryName = category.name;
+                                          },
+                                        );
+                                        printWarning(category.name);
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(
+                                          7,
+                                        ),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: AppTheme.white,
+                                              border: Border.all(
+                                                  width: 2,
+                                                  color: activeCategory == index
+                                                      ? AppTheme.primaryColor
+                                                      : Colors.transparent),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: AppTheme.grey
+                                                      .withOpacity(0.3),
+                                                  spreadRadius: 2,
+                                                  blurRadius: 2,
+                                                ),
+                                              ]),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(25),
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  category.name,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 15,
+                                                  ),
+                                                )
+                                              ],
                                             ),
-                                          )
-                                        ],
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
+                                  ],
+                                );
+                              },
+                            ),
+                          );
+                        } else {
+                          return const Center(
+                            child: Text(
+                                'There is no Categories yet\n Try Adding some'),
+                          );
+                        }
                       },
                     ),
               SizedBox(

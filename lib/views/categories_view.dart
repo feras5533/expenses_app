@@ -63,12 +63,13 @@ class _CategoriesViewState extends State<CategoriesView> {
           : StreamBuilder<QuerySnapshot<CategoriesModel>>(
               stream: categories!.where('id', isEqualTo: userId).snapshots(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                      child: CircularProgressIndicator(
-                    color: AppTheme.primaryColor,
-                  ));
-                } else if (snapshot.hasData) {
+                // if (snapshot.connectionState == ConnectionState.waiting) {
+                //   return Center(
+                //       child: CircularProgressIndicator(
+                //     color: AppTheme.primaryColor,
+                //   ));
+                // } else
+                if (snapshot.hasData) {
                   List<CategoriesModel> categoriesList =
                       snapshot.data!.docs.map((doc) => doc.data()).toList();
                   return ListView.builder(

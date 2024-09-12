@@ -1,12 +1,10 @@
 import 'package:expenses_app/common/prints.dart';
 import 'package:expenses_app/models/categories_model.dart';
+import 'package:expenses_app/models/transaction_model.dart';
 import 'package:expenses_app/widgets/custom_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '/views/daily_transaction_view.dart';
 
 class TransactionsController {
   CollectionReference transactions =
@@ -15,7 +13,6 @@ class TransactionsController {
       FirebaseFirestore.instance.collection('categories');
   CollectionReference total = FirebaseFirestore.instance.collection('total');
   String userId = FirebaseAuth.instance.currentUser!.uid;
-
 
   addTransaction({
     required activeCategory,
@@ -30,15 +27,10 @@ class TransactionsController {
         "id": userId,
         "name": transactionName,
         "date": formattedDate,
-        "price": transactionAmount,
-        "category": activeCategory['name'],
+        "price": double.parse(transactionAmount),
+        "category": activeCategory,
       };
-      await transactions
-          .add(transaction)
-          .then((value) => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const DailyTransactionView(),
-              )))
-          .onError(
+      await transactions.add(transaction).onError(
             (error, stackTrace) =>
                 printError("Error writing transactions document: $error"),
           );
@@ -70,11 +62,6 @@ class TransactionsController {
   }
 
   getCategoriesData() async {
-    // List<CollectionReference<CategoriesModel>?> data;
-
-    // QuerySnapshot querySnapshot =
-    //     await categories.where("id", isEqualTo: userId).get();
-
     return categories.withConverter<CategoriesModel>(
       fromFirestore: (snapshot, options) =>
           CategoriesModel.fromFirestore(snapshot, options),
@@ -83,35 +70,27 @@ class TransactionsController {
   }
 
   getTransactionsData() async {
-    QuerySnapshot querySnapshot =
-        await transactions.where("id", isEqualTo: userId).get();
-
-    List transactionsList =
-        querySnapshot.docs.map((doc) => doc.data()).toList();
-    return transactionsList;
-    //  return transactions.withConverter<CategoriesModel>(
-    //   fromFirestore: (snapshot, options) =>
-    //       CategoriesModel.fromFirestore(snapshot, options),
-    //   toFirestore: (user, options) => user.toFirestore(),
-    // );
+    return transactions.withConverter<TransactionModel>(
+      fromFirestore: (snapshot, options) =>
+          TransactionModel.fromFirestore(snapshot, options),
+      toFirestore: (user, options) => user.toFirestore(),
+    );
   }
 
-  calcTotal({
-    // required activeCategory,
-    required transactionAmount,
-  }) async {
+  Stream<double> calcTotal() async* {
     double totalTransactions = 0.0;
+    try {
+      var querySnapshot =
+          await transactions.where('id', isEqualTo: userId).get();
 
-    // activeCategory['total'] += double.parse(transactionAmount);
-    // total += double.parse(transactionAmount);
-
-    var totalStore = {
-      'total': totalTransactions,
-    };
-    total.add(totalStore).onError(
-          (error, stackTrace) =>
-              printError("Error writing total document: $error"),
-        );
+      for (var docSnapshot in querySnapshot.docs) {
+        totalTransactions += docSnapshot.get('price');
+        yield totalTransactions;
+      }
+      printWarning(totalTransactions);
+    } catch (e) {
+      printWarning("Error completing: $e");
+    }
   }
 
   calcCategoryTotal({

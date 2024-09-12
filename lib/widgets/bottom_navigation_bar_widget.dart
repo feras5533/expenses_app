@@ -23,7 +23,6 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   }
 
   List<Widget> pages = [];
-  List transactions = [];
 
   int pageIndex = 0;
 
@@ -36,9 +35,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
 
   initData() async {
     pages = [
-      DailyTransactionView(
-        transactions: transactions,
-      ),
+      const DailyTransactionView(),
       const CategoriesView(),
       const StatsView(),
       const ProfileView(),
