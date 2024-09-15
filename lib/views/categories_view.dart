@@ -3,11 +3,10 @@ import 'package:expenses_app/models/categories_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import '/controllers/transactions_controller.dart';
+import '../controllers/categories_controller.dart';
+import '../widgets/add_edit_category_popup.dart';
 import '/widgets/custom_scaffold.dart';
-import '/controllers/categories_controller.dart';
 import '/common/color_constants.dart';
-import '/json/day_month.dart';
 
 class CategoriesView extends StatefulWidget {
   const CategoriesView({
@@ -30,8 +29,9 @@ class _CategoriesViewState extends State<CategoriesView> {
   int activeMonth = 3;
   bool isLoading = true;
   CollectionReference<CategoriesModel>? categories;
+
   getCategoriesData() async {
-    TransactionsController request = TransactionsController();
+    CategoriesController request = CategoriesController(context: context);
     categories = await request.getCategoriesData();
     setState(() {
       isLoading = false;
@@ -39,8 +39,23 @@ class _CategoriesViewState extends State<CategoriesView> {
   }
 
   addCategory() async {
+    addEditCategoryPopup(
+      context: context,
+      funcType: 'add',
+    );
+  }
+
+  editCategory({required String docId}) async {
+    addEditCategoryPopup(
+      context: context,
+      docId: docId,
+      funcType: 'edit',
+    );
+  }
+
+  deleteCategory({required String docId}) {
     CategoriesController request = CategoriesController(context: context);
-    await request.addCategoryPopup();
+    request.deleteCategory(docId: docId);
   }
 
   @override
@@ -48,12 +63,10 @@ class _CategoriesViewState extends State<CategoriesView> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return customScaffold(
-      toolbarHeight: height * 0.2,
+      toolbarHeight: height * 0.1,
       appBarTitle: appBar(
         height: height,
       ),
-      //.where('id', isEqualTo: userId)
-
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(
@@ -63,28 +76,29 @@ class _CategoriesViewState extends State<CategoriesView> {
           : StreamBuilder<QuerySnapshot<CategoriesModel>>(
               stream: categories!.where('id', isEqualTo: userId).snapshots(),
               builder: (context, snapshot) {
-                // if (snapshot.connectionState == ConnectionState.waiting) {
-                //   return Center(
-                //       child: CircularProgressIndicator(
-                //     color: AppTheme.primaryColor,
-                //   ));
-                // } else
                 if (snapshot.hasData) {
-                  List<CategoriesModel> categoriesList =
-                      snapshot.data!.docs.map((doc) => doc.data()).toList();
+                  List<Map<String, dynamic>> categoriesList =
+                      snapshot.data!.docs.map((doc) {
+                    return {
+                      'data': doc.data(),
+                      'id': doc.id,
+                    };
+                  }).toList();
+
                   return ListView.builder(
                       padding: const EdgeInsets.only(top: 20),
                       shrinkWrap: true,
                       itemCount: categoriesList.length,
                       itemBuilder: (context, index) {
-                        final CategoriesModel category = categoriesList[index];
-
+                        final CategoriesModel category =
+                            categoriesList[index]['data'];
                         return customCategory(
                           height: height,
                           width: width,
                           name: category.name,
                           total: category.total,
                           percentage: category.percentage,
+                          docId: categoriesList[index]['id'],
                         );
                       });
                 } else {
@@ -97,11 +111,12 @@ class _CategoriesViewState extends State<CategoriesView> {
   }
 
   customCategory({
-    required height,
-    required width,
-    required name,
-    required total,
-    required percentage,
+    required double height,
+    required double width,
+    required String name,
+    required double total,
+    required double percentage,
+    required String docId,
   }) {
     return Padding(
       padding: EdgeInsets.only(
@@ -110,14 +125,14 @@ class _CategoriesViewState extends State<CategoriesView> {
         bottom: height * 0.015,
       ),
       child: Slidable(
-        // Specify a key if the Slidable is dismissible.
         key: const ValueKey(0),
-
         startActionPane: ActionPane(
           motion: const DrawerMotion(),
           children: [
             SlidableAction(
-              onPressed: (context) {},
+              onPressed: (context) {
+                deleteCategory(docId: docId);
+              },
               backgroundColor: AppTheme.red,
               foregroundColor: AppTheme.white,
               icon: Icons.delete,
@@ -145,9 +160,9 @@ class _CategoriesViewState extends State<CategoriesView> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.grey.withOpacity(0.02),
-                spreadRadius: 10,
-                blurRadius: 3,
+                color: AppTheme.black.withOpacity(0.3),
+                spreadRadius: 1,
+                blurRadius: 1,
               ),
             ],
           ),
@@ -244,64 +259,6 @@ class _CategoriesViewState extends State<CategoriesView> {
             )
           ],
         ),
-        SizedBox(
-          height: height * 0.03,
-        ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(
-              months.length,
-              (index) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      activeMonth = index;
-                    });
-                  },
-                  child: SizedBox(
-                    width: (MediaQuery.of(context).size.width - 40) / 6,
-                    child: Column(
-                      children: [
-                        Text(
-                          months[index]['label'],
-                          style: const TextStyle(fontSize: 10),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                              color: activeMonth == index
-                                  ? AppTheme.primaryColor
-                                  : AppTheme.black.withOpacity(0.02),
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                  color: activeMonth == index
-                                      ? AppTheme.primaryColor
-                                      : AppTheme.black.withOpacity(0.1))),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 12, right: 12, top: 7, bottom: 7),
-                            child: Text(
-                              months[index]['day'],
-                              style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                  color: activeMonth == index
-                                      ? AppTheme.white
-                                      : AppTheme.black),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        )
       ],
     );
   }

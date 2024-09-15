@@ -1,18 +1,24 @@
-import 'package:expenses_app/common/prints.dart';
-import 'package:expenses_app/models/categories_model.dart';
-import 'package:expenses_app/models/transaction_model.dart';
-import 'package:expenses_app/widgets/custom_snackbar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '/common/prints.dart';
+import '/models/transaction_model.dart';
+import '/widgets/custom_snackbar.dart';
 
 class TransactionsController {
+  BuildContext context;
   CollectionReference transactions =
       FirebaseFirestore.instance.collection('transactions');
   CollectionReference categories =
       FirebaseFirestore.instance.collection('categories');
   CollectionReference total = FirebaseFirestore.instance.collection('total');
   String userId = FirebaseAuth.instance.currentUser!.uid;
+
+  TransactionsController({
+    required this.context,
+  });
 
   addTransaction({
     required activeCategory,
@@ -45,30 +51,6 @@ class TransactionsController {
     }
   }
 
-  addCategory({
-    required String name,
-    color,
-  }) {
-    var category = <String, dynamic>{
-      "id": userId,
-      "name": name,
-      "percentage": 0.0,
-      "total": 0.0,
-    };
-    categories.doc().set(category).onError(
-          (error, stackTrace) =>
-              printError("Error writing categories document: $error"),
-        );
-  }
-
-  getCategoriesData() async {
-    return categories.withConverter<CategoriesModel>(
-      fromFirestore: (snapshot, options) =>
-          CategoriesModel.fromFirestore(snapshot, options),
-      toFirestore: (user, options) => user.toFirestore(),
-    );
-  }
-
   getTransactionsData() async {
     return transactions.withConverter<TransactionModel>(
       fromFirestore: (snapshot, options) =>
@@ -87,40 +69,40 @@ class TransactionsController {
         totalTransactions += docSnapshot.get('price');
         yield totalTransactions;
       }
-      printWarning(totalTransactions);
     } catch (e) {
-      printWarning("Error completing: $e");
+      printError("Error completing: $e");
     }
   }
 
-  calcCategoryTotal({
-    required activeCategory,
-    required transactionAmount,
+  deleteTransaction({required String docId}) async {
+    try {
+      await transactions.doc(docId).delete();
+      customDialog(
+          title: 'The transaction has\n been deleted', context: context);
+    } catch (e) {
+      printError('Error deleting transaction document: $e');
+    }
+  }
+
+  editTransaction({
+    required String docId,
+    required String name,
+    required double price,
   }) async {
-    double total = 0.0;
-
-    activeCategory['total'] += double.parse(transactionAmount);
-    total += double.parse(transactionAmount);
-
-    var totalStore = {
-      'total': total,
-    };
-    categories.add(totalStore);
-    // db
-    //     .collection("categories")
-    //     .doc()
-    //     .set(totalStore)
-    //     .onError((e, _) => printError("Error writing total document: $e"));
+    try {
+      await categories.doc(docId).update({
+        'name': name,
+        'price': price,
+      });
+      customDialog(
+          title: 'The transaction has\n been updated', context: context);
+    } catch (e) {
+      printError('Error updating transaction document: $e');
+      customDialog(
+          title: 'Somthing wrong happened\n try again please',
+          context: context);
+    }
   }
 
-  calculatePercentages() {
-    // double totalSum =
-    //     categories.fold(0.0, (double sum, category) => sum + category["total"]);
-
-    // for (var category in categories) {
-    //   category["percentage"] = ((category["total"] / totalSum) * 100);
-    // }
-
-    // update();
-  }
+ 
 }
