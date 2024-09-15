@@ -1,7 +1,6 @@
-import 'package:expenses_app/common/color_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:expenses_app/common/color_constants.dart';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 
 customDialog({
@@ -31,11 +30,10 @@ customDialog({
             const SizedBox(
               width: 10,
             ),
-            AutoSizeText(
+            Text(
               title,
-              minFontSize: 10,
-              maxFontSize: 13,
               style: const TextStyle(
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
