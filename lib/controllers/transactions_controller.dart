@@ -1,91 +1,108 @@
-import 'package:expenses_app/widgets/custom_snackbar.dart';
-import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '/common/color_constants.dart';
+import '/common/prints.dart';
+import '/models/transaction_model.dart';
+import '/widgets/custom_snackbar.dart';
 
-List categories = [
-  {
-    "name": "Food",
-    "percentage": 0.0,
-    "total": 0.0,
-    "color": green,
-  },
-  {
-    "name": "Gift",
-    "percentage": 0.0,
-    "total": 0.0,
-    "color": blue,
-  },
-  {
-    "name": "Charity",
-    "percentage": 0.0,
-    "total": 0.0,
-    "color": red,
-  },
-  {
-    "name": "Transportation",
-    "percentage": 0.0,
-    "total": 0.0,
-    "color": orange,
-  },
-];
+class TransactionsController {
+  BuildContext context;
+  CollectionReference transactions =
+      FirebaseFirestore.instance.collection('transactions');
+  CollectionReference categories =
+      FirebaseFirestore.instance.collection('categories');
+  CollectionReference total = FirebaseFirestore.instance.collection('total');
+  String userId = FirebaseAuth.instance.currentUser!.uid;
 
-class TransactionsController extends GetxController {
-  List dailyTransactions = [];
-  double total = 0.0;
+  TransactionsController({
+    required this.context,
+  });
 
-  void addTransaction({
+  addTransaction({
     required activeCategory,
     required transactionName,
     required transactionAmount,
     required context,
-  }) {
+  }) async {
     if (transactionName.isNotEmpty && transactionAmount.isNotEmpty) {
       DateTime now = DateTime.now();
       String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-      dailyTransactions.add({
+      var transaction = {
+        "id": userId,
         "name": transactionName,
         "date": formattedDate,
-        "price": "\$$transactionAmount",
-        "category": categories[activeCategory]['name'],
-      });
-      categories[activeCategory]['total'] += double.parse(transactionAmount);
-      total += double.parse(transactionAmount);
-      update();
+        "price": double.parse(transactionAmount),
+        "category": activeCategory,
+      };
+      await transactions.add(transaction).onError(
+            (error, stackTrace) =>
+                printError("Error writing transactions document: $error"),
+          );
+
       customDialog(
         title: 'The Transaction Has Been Added',
         context: context,
         error: false,
       );
-      calculatePercentages();
     } else {
       customDialog(title: 'Please fill both the fields', context: context);
     }
   }
 
-  List<dynamic> addCategory({
-    required String name,
-    color = green,
-  }) {
-    categories.add({
-      "name": name,
-      "percentage": 0.0,
-      "total": 0.0,
-      "color": color,
-    });
-    update();
-    return categories;
+  getTransactionsData() async {
+    return transactions.withConverter<TransactionModel>(
+      fromFirestore: (snapshot, options) =>
+          TransactionModel.fromFirestore(snapshot, options),
+      toFirestore: (user, options) => user.toFirestore(),
+    );
   }
 
-  void calculatePercentages() {
-    double totalSum =
-        categories.fold(0.0, (sum, category) => sum + category["total"]);
+  Stream<double> calcTotal() async* {
+    double totalTransactions = 0.0;
+    try {
+      var querySnapshot =
+          await transactions.where('id', isEqualTo: userId).get();
 
-    for (var category in categories) {
-      category["percentage"] = ((category["total"] / totalSum) * 100);
+      for (var docSnapshot in querySnapshot.docs) {
+        totalTransactions += docSnapshot.get('price');
+        yield totalTransactions;
+      }
+    } catch (e) {
+      printError("Error completing: $e");
     }
-
-    update();
   }
+
+  deleteTransaction({required String docId}) async {
+    try {
+      await transactions.doc(docId).delete();
+      customDialog(
+          title: 'The transaction has\n been deleted', context: context);
+    } catch (e) {
+      printError('Error deleting transaction document: $e');
+    }
+  }
+
+  editTransaction({
+    required String docId,
+    required String name,
+    required double price,
+  }) async {
+    try {
+      await categories.doc(docId).update({
+        'name': name,
+        'price': price,
+      });
+      customDialog(
+          title: 'The transaction has\n been updated', context: context);
+    } catch (e) {
+      printError('Error updating transaction document: $e');
+      customDialog(
+          title: 'Somthing wrong happened\n try again please',
+          context: context);
+    }
+  }
+
+ 
 }

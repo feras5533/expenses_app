@@ -1,7 +1,6 @@
-import 'package:expenses_app/common/color_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:expenses_app/common/color_constants.dart';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 
 customDialog({
@@ -15,11 +14,12 @@ customDialog({
         height: 50,
         padding: const EdgeInsets.only(left: 20),
         decoration: BoxDecoration(
-          border: Border.all(color: error ? Colors.black : primary),
+          border:
+              Border.all(color: error ? Colors.black : AppTheme.primaryColor),
           borderRadius: const BorderRadius.all(
             Radius.circular(15),
           ),
-          color: error ? Colors.grey.shade900 : primary,
+          color: error ? Colors.grey.shade900 : AppTheme.primaryColor,
         ),
         child: Row(
           children: [
@@ -30,11 +30,10 @@ customDialog({
             const SizedBox(
               width: 10,
             ),
-            AutoSizeText(
+            Text(
               title,
-              minFontSize: 10,
-              maxFontSize: 13,
               style: const TextStyle(
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),

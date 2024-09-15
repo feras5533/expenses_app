@@ -35,7 +35,7 @@ LineChartData mainData() {
           const FlSpot(8, 3),
         ],
         isCurved: true,
-        color: primary,
+        color: AppTheme.primaryColor,
         barWidth: 2,
         isStrokeCapRound: true,
       ),

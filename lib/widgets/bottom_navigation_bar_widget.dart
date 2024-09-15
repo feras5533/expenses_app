@@ -1,10 +1,11 @@
+import 'package:expenses_app/views/profile_view.dart';
+import 'package:expenses_app/views/stats_view.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-
 import '/common/color_constants.dart';
-import '/views/budget_view.dart';
+import '/views/categories_view.dart';
 import '/views/create_transaction_view.dart';
-import '/views/daily_view.dart';
+import '/views/daily_transaction_view.dart';
 
 class BottomNavigationBarWidget extends StatefulWidget {
   const BottomNavigationBarWidget({super.key});
@@ -15,23 +16,46 @@ class BottomNavigationBarWidget extends StatefulWidget {
 }
 
 class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
+  @override
+  void initState() {
+    initData();
+    super.initState();
+  }
+
+  List<Widget> pages = [];
+
   int pageIndex = 0;
 
-  List<Widget> pages = [
-    const DailyView(),
-    const BudgetView(),
-    const CreatTransactionView(),
-  ];
+  selectedTab(index) {
+    setState(() {
+      initData();
+      pageIndex = index;
+    });
+  }
+
+  initData() async {
+    pages = [
+      const DailyTransactionView(),
+      const CategoriesView(),
+      const StatsView(),
+      const ProfileView(),
+      const CreatTransactionView(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: body(),
+      body: IndexedStack(
+        index: pageIndex,
+        children: pages,
+      ),
       bottomNavigationBar: navBar(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          selectedTab(2);
+          initData();
+          selectedTab(4);
         },
         shape: const CircleBorder(),
         backgroundColor: Colors.green,
@@ -44,22 +68,17 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
     );
   }
 
-  Widget body() {
-    return IndexedStack(
-      index: pageIndex,
-      children: pages,
-    );
-  }
-
   Widget navBar() {
     List<IconData> iconItems = [
-      Icons.calendar_month,
       Icons.wallet,
+      Icons.calendar_month,
+      Icons.stacked_bar_chart,
+      Icons.person,
     ];
 
     return AnimatedBottomNavigationBar(
-      activeColor: primary,
-      splashColor: secondary,
+      activeColor: AppTheme.primaryColor,
+      splashColor: AppTheme.secondaryColor,
       inactiveColor: Colors.black.withOpacity(0.5),
       icons: iconItems,
       activeIndex: pageIndex,
@@ -72,11 +91,5 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
         selectedTab(index);
       },
     );
-  }
-
-  selectedTab(index) {
-    setState(() {
-      pageIndex = index;
-    });
   }
 }
