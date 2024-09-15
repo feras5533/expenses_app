@@ -142,7 +142,9 @@ class _CategoriesViewState extends State<CategoriesView> {
               ),
             ),
             SlidableAction(
-              onPressed: (context) {},
+              onPressed: (context) {
+                editCategory(docId: docId);
+              },
               backgroundColor: AppTheme.primaryColor,
               foregroundColor: AppTheme.white,
               icon: Icons.edit,

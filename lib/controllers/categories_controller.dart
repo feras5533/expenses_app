@@ -19,17 +19,25 @@ class CategoriesController {
   addCategory({
     required String name,
     color,
-  }) {
-    var category = <String, dynamic>{
-      "id": userId,
-      "name": name,
-      "percentage": 0.0,
-      "total": 0.0,
-    };
-    categories.doc().set(category).onError(
-          (error, stackTrace) =>
-              printError("Error writing categories document: $error"),
-        );
+  }) async {
+    if (name.isNotEmpty) {
+      try {
+        var category = <String, dynamic>{
+          "id": userId,
+          "name": name,
+          "percentage": 0.0,
+          "total": 0.0,
+        };
+        await categories.doc().set(category).onError(
+              (error, stackTrace) =>
+                  printError("Error writing categories document: $error"),
+            );
+      } catch (e) {
+        printError('Error adding category document: $e');
+      }
+    } else {
+      customDialog(title: 'the name can\'t be empty', context: context);
+    }
   }
 
   getCategoriesData() async {
@@ -53,16 +61,20 @@ class CategoriesController {
     required String docId,
     required String name,
   }) async {
-    try {
-      await categories.doc(docId).update({
-        'name': name,
-      });
-      customDialog(title: 'The category has\n been updated', context: context);
-    } catch (e) {
-      printError('Error updating category document: $e');
-      customDialog(
-          title: 'Somthing wrong happened\n try again please',
-          context: context);
+    if (name.isNotEmpty) {
+      try {
+        await categories.doc(docId).update({
+          'name': name,
+        });
+        customDialog(title: 'The category has been updated', context: context);
+      } catch (e) {
+        printError('Error updating category document: $e');
+        customDialog(
+            title: 'Somthing wrong happened\n try again please',
+            context: context);
+      }
+    } else {
+      customDialog(title: 'the name can\'t be empty', context: context);
     }
   }
 

@@ -33,7 +33,7 @@ customDialog({
             Text(
               title,
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
