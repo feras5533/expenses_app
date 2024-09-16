@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expenses_app/models/transaction_model.dart';
 import 'package:expenses_app/widgets/custom_scaffold.dart';
+import 'package:expenses_app/widgets/edit_transaction_popup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -36,9 +37,26 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
     transactions = await request.getTransactionsData();
   }
 
-  deleteTransaction({required String docId}) {
+  deleteTransaction({
+    required String docId,
+  }) async {
     TransactionsController request = TransactionsController(context: context);
-    request.deleteTransaction(docId: docId);
+    await request.deleteTransaction(
+      docId: docId,
+    );
+  }
+
+  editTransaction({
+    required String docId,
+    required String oldName,
+    required oldPrice,
+  }) {
+    editTransactionPopup(
+      context: context,
+      docId: docId,
+      oldname: oldName,
+      oldPrice: oldPrice,
+    );
   }
 
   calcTotal() {
@@ -98,6 +116,8 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
                               height: height,
                               transaction: transaction,
                               docId: transactionList[index]['id'],
+                              oldName: transaction.name,
+                              oldPrice: transaction.price.toString(),
                             );
                           },
                         ),
@@ -166,6 +186,8 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
     required double height,
     required TransactionModel transaction,
     required String docId,
+    required String oldName,
+    required String oldPrice,
   }) {
     return Padding(
       padding: EdgeInsets.only(
@@ -192,7 +214,13 @@ class _DailyTransactionViewState extends State<DailyTransactionView> {
               ),
             ),
             SlidableAction(
-              onPressed: (context) {},
+              onPressed: (context) {
+                editTransaction(
+                  docId: docId,
+                  oldName: oldName,
+                  oldPrice: oldPrice,
+                );
+              },
               backgroundColor: AppTheme.primaryColor,
               foregroundColor: AppTheme.white,
               icon: Icons.edit,

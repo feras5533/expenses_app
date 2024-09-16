@@ -9,7 +9,7 @@ addEditCategoryPopup({
   String docId = '',
 }) {
   TextEditingController titleController = TextEditingController();
-  String doneText = 'add';
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -42,19 +42,17 @@ addEditCategoryPopup({
             },
           ),
           TextButton(
-            child: Text(doneText),
+            child: const Text('Done'),
             onPressed: () async {
               CategoriesController request =
                   CategoriesController(context: context);
               switch (funcType) {
                 case 'add':
                   await request.addCategory(name: titleController.text);
-                  doneText = 'add';
 
                 case 'edit':
                   await request.editCategory(
                       docId: docId, name: titleController.text);
-                  doneText = 'edit';
                   break;
                 default:
               }

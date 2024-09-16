@@ -104,7 +104,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
                               .data!.docs
                               .map((doc) => doc.data())
                               .toList();
-
+                          categoryName = categoriesList[0].name;
                           return customCategory(categoriesList);
                         } else {
                           return const Center(
@@ -117,7 +117,9 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
               SizedBox(
                 height: width * 0.15,
               ),
-              addTransactionForm(context),
+              addTransactionForm(
+                context: context,
+              ),
             ],
           ),
         ),
@@ -125,7 +127,7 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
     );
   }
 
-  Column addTransactionForm(BuildContext context) {
+  Column addTransactionForm({required BuildContext context}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

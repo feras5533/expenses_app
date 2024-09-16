@@ -87,22 +87,24 @@ class TransactionsController {
   editTransaction({
     required String docId,
     required String name,
-    required double price,
+    required String price,
   }) async {
-    try {
-      await categories.doc(docId).update({
-        'name': name,
-        'price': price,
-      });
-      customDialog(
-          title: 'The transaction has\n been updated', context: context);
-    } catch (e) {
-      printError('Error updating transaction document: $e');
-      customDialog(
-          title: 'Somthing wrong happened\n try again please',
-          context: context);
+    if (name.isNotEmpty || price.toString().isNotEmpty) {
+      try {
+        await categories.doc(docId).set({
+          'name': name,
+          'price': double.parse(price),
+        }, SetOptions(merge: true));
+        customDialog(
+            title: 'The transaction has been updated', context: context);
+      } catch (e) {
+        printError('Error updating transaction document: $e');
+        customDialog(
+            title: 'Somthing wrong happened try again please',
+            context: context);
+      }
+    } else {
+      customDialog(title: 'both fields must be filled', context: context);
     }
   }
-
- 
 }

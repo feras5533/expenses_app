@@ -63,9 +63,9 @@ class CategoriesController {
   }) async {
     if (name.isNotEmpty) {
       try {
-        await categories.doc(docId).update({
+        await categories.doc(docId).set({
           'name': name,
-        });
+        }, SetOptions(merge: true));
         customDialog(title: 'The category has been updated', context: context);
       } catch (e) {
         printError('Error updating category document: $e');
