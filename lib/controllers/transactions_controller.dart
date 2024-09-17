@@ -11,8 +11,7 @@ class TransactionsController {
   BuildContext context;
   CollectionReference transactions =
       FirebaseFirestore.instance.collection('transactions');
-  CollectionReference categories =
-      FirebaseFirestore.instance.collection('categories');
+
   CollectionReference total = FirebaseFirestore.instance.collection('total');
   String userId = FirebaseAuth.instance.currentUser!.uid;
 
@@ -91,7 +90,7 @@ class TransactionsController {
   }) async {
     if (name.isNotEmpty || price.toString().isNotEmpty) {
       try {
-        await categories.doc(docId).set({
+        await transactions.doc(docId).set({
           'name': name,
           'price': double.parse(price),
         }, SetOptions(merge: true));

@@ -169,10 +169,6 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 IconButton(
                   onPressed: () {
-                    // customDialog(
-                    //   title: 'this feature in not available',
-                    //   context: context,
-                    // );
                     loginWithGoogle();
                   },
                   icon: Image.asset(ImagesUrls.googleLogo),

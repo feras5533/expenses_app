@@ -65,13 +65,14 @@ editTransactionPopup({
                 name: titleController.text.isNotEmpty
                     ? titleController.text
                     : oldname,
-                price: '12',
-                // priceController.text.isNotEmpty
-                //     ? priceController.text
-                //     : oldPrice,
+                price: priceController.text.isNotEmpty
+                    ? priceController.text
+                    : oldPrice,
               );
-              printWarning(titleController.text);
-              printWarning(priceController.text);
+              // printWarning(titleController.text);
+              // printWarning(priceController.text);
+              // printWarning(oldname);
+              // printWarning(oldPrice);
               Navigator.of(context).pop();
             },
           ),
