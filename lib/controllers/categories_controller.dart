@@ -10,6 +10,8 @@ class CategoriesController {
   BuildContext context;
   CollectionReference categories =
       FirebaseFirestore.instance.collection('categories');
+  CollectionReference transactions =
+      FirebaseFirestore.instance.collection('transactions');
   String userId = FirebaseAuth.instance.currentUser!.uid;
 
   CategoriesController({
@@ -18,25 +20,35 @@ class CategoriesController {
 
   addCategory({
     required String name,
-    color,
   }) async {
     if (name.isNotEmpty) {
       try {
-        var category = <String, dynamic>{
-          "id": userId,
-          "name": name,
-          "percentage": 0.0,
-          "total": 0.0,
-        };
-        await categories.doc().set(category).onError(
-              (error, stackTrace) =>
-                  printError("Error writing categories document: $error"),
-            );
+        var existingCategory = await categories
+            .where('id', isEqualTo: userId)
+            .where('name', isEqualTo: name)
+            .get();
+
+        if (existingCategory.docs.isNotEmpty) {
+          customDialog(
+              title: 'Category with the same name \nalready exists',
+              context: context);
+        } else {
+          var category = <String, dynamic>{
+            "id": userId,
+            "name": name,
+            "percentage": 0.0,
+            "total": 0.0,
+          };
+          await categories.doc().set(category).onError(
+                (error, stackTrace) =>
+                    printError("Error writing categories document: $error"),
+              );
+        }
       } catch (e) {
         printError('Error adding category document: $e');
       }
     } else {
-      customDialog(title: 'the name can\'t be empty', context: context);
+      customDialog(title: 'The name can\'t be empty', context: context);
     }
   }
 
@@ -50,12 +62,47 @@ class CategoriesController {
 
   deleteCategory({required String docId}) async {
     try {
-      await categories.doc(docId).delete();
-      customDialog(title: 'The category has been deleted', context: context);
+      // Reference to the category document
+      var foundCategory = categories.doc(docId);
+
+      // Fetch the category name based on the docId
+      var categorySnapshot = await foundCategory.get();
+      var categoryName = categorySnapshot['name'];
+
+      // Query transactions that are associated with the category name
+      var categoryTransactions = await transactions
+          .where('category', isEqualTo: categoryName)
+          .where('id', isEqualTo: userId)
+          .get();
+
+      // Delete each transaction linked to the category
+      for (var docSnapshot in categoryTransactions.docs) {
+        // printWarning(docSnapshot.data());
+        await docSnapshot.reference.delete();
+      }
+
+      // Delete the category itself
+      await foundCategory.delete();
+
+      customDialog(
+          title: 'The category and related \ntransactions have been deleted',
+          context: context);
     } catch (e) {
-      printError('Error deleting category document: $e');
+      printError('Error deleting category or transactions: $e');
     }
   }
+
+  // deleteCategory({required String docId}) async {
+  //   try {
+  //     var foundCategory = categories.doc(docId);
+  //     var categoryTransactions =
+  //         await transactions.where('id', isEqualTo: userId).get();
+  //     await foundCategory.delete();
+  //     customDialog(title: 'The category has been deleted', context: context);
+  //   } catch (e) {
+  //     printError('Error deleting category document: $e');
+  //   }
+  // }
 
   editCategory({
     required String docId,

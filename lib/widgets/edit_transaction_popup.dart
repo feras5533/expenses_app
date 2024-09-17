@@ -1,4 +1,3 @@
-import 'package:expenses_app/common/prints.dart';
 import 'package:expenses_app/controllers/transactions_controller.dart';
 import 'package:flutter/material.dart';
 
@@ -69,10 +68,7 @@ editTransactionPopup({
                     ? priceController.text
                     : oldPrice,
               );
-              // printWarning(titleController.text);
-              // printWarning(priceController.text);
-              // printWarning(oldname);
-              // printWarning(oldPrice);
+
               Navigator.of(context).pop();
             },
           ),

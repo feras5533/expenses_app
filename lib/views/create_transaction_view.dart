@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expenses_app/widgets/custom_scaffold.dart';
-import 'package:expenses_app/widgets/custom_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '/widgets/custom_scaffold.dart';
+import '/widgets/custom_snackbar.dart';
 import '/controllers/categories_controller.dart';
 import '/models/categories_model.dart';
 import '/controllers/transactions_controller.dart';
@@ -45,21 +45,25 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
 
   addTransaction() async {
     TransactionsController request = TransactionsController(context: context);
-    if (_transactionName.text.isNotEmpty &&
-        _transactionAmount.text.isNotEmpty) {
-      await request.addTransaction(
-        activeCategory: categoryName,
-        transactionName: _transactionName.text,
-        transactionAmount: _transactionAmount.text,
-        context: context,
-      );
+    if (categoryName.isNotEmpty) {
+      if (_transactionName.text.isNotEmpty &&
+          _transactionAmount.text.isNotEmpty) {
+        await request.addTransaction(
+          activeCategory: categoryName,
+          transactionName: _transactionName.text,
+          transactionAmount: _transactionAmount.text,
+          context: context,
+        );
 
-      setState(() {
-        _transactionName.clear();
-        _transactionAmount.clear();
-      });
+        setState(() {
+          _transactionName.clear();
+          _transactionAmount.clear();
+        });
+      } else {
+        customDialog(title: 'the fields must be filled', context: context);
+      }
     } else {
-      customDialog(title: 'the fields must be filled', context: context);
+      customDialog(title: 'add some categories first', context: context);
     }
   }
 
@@ -76,53 +80,60 @@ class _CreatTransactionViewState extends State<CreatTransactionView> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Text(
-                "Choose The Transaction Category",
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.black.withOpacity(0.5)),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                      color: AppTheme.primaryColor,
-                    ))
-                  : StreamBuilder<QuerySnapshot<CategoriesModel>>(
-                      stream: categories!
-                          .where('id', isEqualTo: userId)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          List<CategoriesModel> categoriesList = snapshot
-                              .data!.docs
-                              .map((doc) => doc.data())
-                              .toList();
-                          categoryName = categoriesList[0].name;
-                          return customCategory(categoriesList);
-                        } else {
-                          return const Center(
-                            child: Text(
-                                'There is no Categories yet\n Try Adding some'),
-                          );
-                        }
-                      },
-                    ),
-              SizedBox(
-                height: width * 0.15,
-              ),
-              addTransactionForm(
-                context: context,
-              ),
-            ],
-          ),
+        child: chooseTransactionWidget(
+          width: width,
+          context: context,
         ),
+      ),
+    );
+  }
+
+  SingleChildScrollView chooseTransactionWidget({
+    required double width,
+    required BuildContext context,
+  }) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Text(
+            "Choose The Transaction Category",
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.black.withOpacity(0.5)),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          isLoading
+              ? Center(
+                  child: CircularProgressIndicator(
+                  color: AppTheme.primaryColor,
+                ))
+              : StreamBuilder<QuerySnapshot<CategoriesModel>>(
+                  stream:
+                      categories!.where('id', isEqualTo: userId).snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                      List<CategoriesModel> categoriesList =
+                          snapshot.data!.docs.map((doc) => doc.data()).toList();
+                      categoryName = categoriesList[0].name;
+                      return customCategory(categoriesList);
+                    } else {
+                      return const Center(
+                        child:
+                            Text('There is no Categories yet Try Adding some'),
+                      );
+                    }
+                  },
+                ),
+          SizedBox(
+            height: width * 0.15,
+          ),
+          addTransactionForm(
+            context: context,
+          ),
+        ],
       ),
     );
   }
